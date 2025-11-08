@@ -1,0 +1,336 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+//// Enums ///////////////////////////////////////////////////////////////
+
+enum ScoreBand {
+  BAND_660_699
+  BAND_700_749
+  BAND_750_PLUS
+}
+
+enum PreferenceType {
+  CASHBACK
+  TRAVEL
+}
+
+enum Category {
+  groceries
+  dining
+  gas
+  transit
+  travel
+  online
+  general
+  utilities
+  streaming
+  drugstore
+}
+
+enum CardNetwork {
+  VISA
+  MASTERCARD
+  AMEX
+  DISCOVER
+}
+
+enum SwitchJobStatus {
+  pending
+  running
+  done
+  failed
+}
+
+enum SwitchEventStatus {
+  queued
+  in_progress
+  updated
+  error
+}
+
+enum AuditArtifactType {
+  CSV
+  JSON
+  PDF
+}
+
+//// Core user ///////////////////////////////////////////////////////////
+
+model Profile {
+  userId    String   @id @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  prefs                  UserPrefs?
+  userCards              UserCard[]
+  userMerchants          UserMerchant[]
+  spendProfileMonthly    SpendProfileMonthly[]
+  merchantProfileMonthly MerchantProfileMonthly[]
+  recRuns                RecommendationRun[]
+  bonusProgress          BonusProgress[]
+  switchJobs             SwitchJob[]
+
+  @@index([createdAt])
+}
+
+model UserPrefs {
+  userId             String         @id @db.Uuid
+  scoreBand          ScoreBand
+  creditHistoryYears Int            @default(0)
+  maxActiveCards     Int            @default(2)
+  annualFeeCapCents  Int            @default(0)
+  preference         PreferenceType @default(CASHBACK)
+  allowAnnualFees    Boolean        @default(true)
+
+  user Profile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+}
+
+//// Aggregates (no raw transactions persisted) /////////////////////////
+
+model SpendProfileMonthly {
+  userId      String   @db.Uuid
+  month       DateTime @db.Date // first day of month
+  category    Category
+  amountCents Int
+
+  user Profile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@id([userId, month, category])
+  @@index([userId, month])
+}
+
+model MerchantProfileMonthly {
+  userId      String   @db.Uuid
+  month       DateTime @db.Date
+  merchant    String
+  category    Category
+  amountCents Int
+
+  user Profile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@id([userId, month, merchant, category])
+  @@index([userId, month])
+  @@index([userId, merchant])
+}
+
+//// Catalog (normalized) ///////////////////////////////////////////////
+
+model CardsCatalog {
+  id              String      @id @default(uuid())
+  name            String
+  issuer          String
+  network         CardNetwork
+  isChargeCard    Boolean     @default(false)
+  annualFeeCents  Int         @default(0)
+  feeCreditsCents Int         @default(0)
+  minScoreBand    ScoreBand
+  valuationCpp    Decimal     @db.Decimal(6, 3) // cents per point
+  active          Boolean     @default(true)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  earnRates        CardEarnRate[]
+  bonuses          CardBonus[]
+  pacing           CardPacing?
+  userCards        UserCard[]
+  bonusProgress    BonusProgress[]
+  recPicks         RecommendationPick[]
+  routingAsNewCard RoutingRecommendation[] @relation("RoutingNewCard")
+
+  @@index([active])
+  @@index([issuer])
+  @@index([network])
+}
+
+model CardEarnRate {
+  id       String   @id @default(uuid())
+  cardId   String
+  category Category
+  ratePct  Decimal  @db.Decimal(6, 4) // e.g., 0.0600 for 6%
+
+  card CardsCatalog @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@unique([cardId, category])
+  @@index([cardId])
+}
+
+model CardBonus {
+  id            String @id @default(uuid())
+  cardId        String
+  points        Int? // either points or cashCents
+  cashCents     Int?
+  windowMonths  Int // e.g., 3
+  minSpendCents Int
+
+  card CardsCatalog @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@index([cardId])
+}
+
+model CardPacing {
+  cardId                 String @id
+  minDaysBetweenNewCards Int    @default(90)
+
+  card CardsCatalog @relation(fields: [cardId], references: [id], onDelete: Cascade)
+}
+
+//// User wallet and merchants /////////////////////////////////////////
+
+model UserCard {
+  id             String       @id @default(uuid())
+  userId         String       @db.Uuid
+  cardCatalogId  String?
+  issuer         String?
+  network        CardNetwork?
+  last4          String?
+  annualFeeCents Int          @default(0)
+  active         Boolean      @default(true)
+  openedAt       DateTime?
+
+  user    Profile       @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  catalog CardsCatalog? @relation(fields: [cardCatalogId], references: [id])
+
+  @@index([userId])
+  @@index([cardCatalogId])
+}
+
+model UserMerchant {
+  id             String   @id @default(uuid())
+  userId         String   @db.Uuid
+  name           String
+  knotMerchantId String?
+  connected      Boolean  @default(true)
+  createdAt      DateTime @default(now())
+
+  user         Profile       @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  switchEvents SwitchEvent[]
+
+  @@index([userId])
+  @@index([knotMerchantId])
+}
+
+//// Recommendations + routing (auditable runs) /////////////////////////
+
+model RecommendationRun {
+  id                  String   @id @default(uuid())
+  userId              String   @db.Uuid
+  createdAt           DateTime @default(now())
+  inputsVersion       String? // e.g., hash of prefs+profile+catalog version
+  inputsJson          Json // profile, prefs snapshot
+  baselineValueCents  Int
+  optimizedValueCents Int
+
+  user   Profile                 @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  picks  RecommendationPick[]
+  routes RoutingRecommendation[]
+
+  @@index([userId, createdAt])
+}
+
+model RecommendationPick {
+  id            String  @id @default(uuid())
+  runId         String
+  cardCatalogId String
+  applyAtMonth  Int     @default(0)
+  fyvCents      Int
+  netFeeCents   Int
+  minSpendCents Int
+  windowMonths  Int
+  feasible      Boolean @default(true)
+
+  run  RecommendationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  card CardsCatalog      @relation(fields: [cardCatalogId], references: [id], onDelete: Restrict)
+
+  @@index([runId])
+  @@index([cardCatalogId])
+}
+
+model RoutingRecommendation {
+  id               String   @id @default(uuid())
+  runId            String
+  merchant         String
+  category         Category
+  currentCardName  String?
+  newCardCatalogId String?
+  deltaCents       Int
+
+  run     RecommendationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  newCard CardsCatalog?     @relation("RoutingNewCard", fields: [newCardCatalogId], references: [id])
+
+  @@index([runId])
+  @@index([merchant])
+}
+
+//// Bonus tracking /////////////////////////////////////////////////////
+
+model BonusProgress {
+  userId        String   @db.Uuid
+  cardCatalogId String
+  windowStart   DateTime @db.Date
+  spentCents    Int      @default(0)
+  targetCents   Int
+
+  user Profile      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  card CardsCatalog @relation(fields: [cardCatalogId], references: [id], onDelete: Restrict)
+
+  @@id([userId, cardCatalogId, windowStart])
+  @@index([userId, windowStart])
+}
+
+//// Knot switching lifecycle //////////////////////////////////////////
+
+model SwitchJob {
+  id           String          @id @default(uuid())
+  userId       String          @db.Uuid
+  status       SwitchJobStatus @default(pending)
+  createdAt    DateTime        @default(now())
+  targetCardId String? // optional: which card to set on file (catalog or user card)
+  note         String?
+
+  user      Profile               @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  events    SwitchEvent[]
+  artifacts SwitchAuditArtifact[]
+
+  @@index([userId, createdAt])
+}
+
+model SwitchEvent {
+  id          String            @id @default(uuid())
+  jobId       String
+  merchantId  String
+  status      SwitchEventStatus
+  detailsJson Json?
+  ts          DateTime          @default(now())
+
+  job      SwitchJob    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  merchant UserMerchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([jobId, ts])
+  @@index([merchantId])
+}
+
+model SwitchAuditArtifact {
+  id          String            @id @default(uuid())
+  jobId       String
+  kind        AuditArtifactType
+  payloadJson Json
+  createdAt   DateTime          @default(now())
+
+  job SwitchJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId, createdAt])
+}
