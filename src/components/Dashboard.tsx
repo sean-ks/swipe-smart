@@ -48,6 +48,7 @@ export default function Dashboard({
     useState(false);
   const [showPendingCard, setShowPendingCard] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<typeof inventory[0] | null>(null);
 
   const [currentGoal, setCurrentGoal] = useState({
     name: "Chase Sapphire Preferred",
@@ -61,13 +62,63 @@ export default function Dashboard({
   >(null);
 
   const inventory = [
-    { name: "Discover it", type: "Cashback", color: "#FF6B35" },
+    {
+      name: "Discover it",
+      type: "Cashback",
+      color: "#FF6B35",
+      last4: "1248",
+      perks: ["5% rotating categories", "Cashback Match"],
+      apr: "16.99%",
+      limit: "$5,000",
+      owned: true
+    },
     {
       name: "Capital One QuickSilver",
       type: "Cashback",
       color: "#004C97",
+      last4: "8891",
+      perks: ["1.5% unlimited cashback", "No foreign fees"],
+      apr: "18.99%",
+      limit: "$3,500",
+      owned: true
     },
   ];
+
+  // Cards available on route but not owned yet
+  const unlockedCards = [
+    {
+      name: "Chase Sapphire Preferred",
+      type: "Travel Rewards",
+      color: "#1E40AF",
+      last4: "????",
+      perks: ["3x Travel & Dining", "Transfer to partners", "Trip protection"],
+      apr: "21.99%",
+      limit: "TBD",
+      owned: false
+    },
+    {
+      name: "Amex Gold Card",
+      type: "Dining & Groceries",
+      color: "#D97706",
+      last4: "????",
+      perks: ["4x Restaurants", "4x Groceries", "Uber credits"],
+      apr: "19.99%",
+      limit: "TBD",
+      owned: false
+    },
+    {
+      name: "Citi Double Cash",
+      type: "Cashback",
+      color: "#059669",
+      last4: "????",
+      perks: ["2% on everything", "0% intro APR", "Balance transfers"],
+      apr: "18.99%",
+      limit: "TBD",
+      owned: false
+    },
+  ];
+
+  const allCards = [...inventory, ...unlockedCards];
 
   const creditTip =
     "Pay your balance in full each month to avoid interest charges and build a positive payment history.";
@@ -572,49 +623,207 @@ export default function Dashboard({
             </div>
           </motion.div>
 
-          {/* Inventory */}
+          {/* Card Pokédex */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-white/10 backdrop-blur-lg border-4 border-white/30 rounded-2xl p-6 shadow-2xl"
+            transition={{ delay: 0.4, duration: 0.3 }}
+            className="bg-white/10 backdrop-blur-lg border-4 border-white/30 rounded-2xl p-6 shadow-2xl flex flex-col"
           >
             <h2 className="text-white mb-6">
-              Your Card Inventory
+              Card Collection
             </h2>
 
-            <div className="grid grid-cols-2 gap-4">
-              {inventory.map((card, index) => (
-                <motion.div
-                  key={card.name}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{
-                    delay: 0.5 + index * 0.1,
-                    type: "spring",
-                  }}
-                  className="cursor-pointer"
-                >
-                  <PixelCard card={card} size="medium" />
-                </motion.div>
-              ))}
-              {/* Empty slots */}
-              {[...Array(2)].map((_, i) => (
-                <motion.div
-                  key={`empty-${i}`}
-                  className="w-32 h-20 border-4 border-dashed border-white/20 rounded-lg flex items-center justify-center"
-                  whileHover={{
-                    borderColor: "rgba(255, 255, 255, 0.4)",
-                  }}
-                >
-                  <span className="text-white/40 text-xs">
-                    Empty Slot
-                  </span>
-                </motion.div>
-              ))}
+            {/* Scrollable container for cards */}
+            <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2 scrollbar-custom" style={{ maxHeight: '400px' }}>
+              {/* Pokédex-style grid */}
+              <div className="grid grid-cols-2 gap-4">
+                {allCards.map((card, i) => (
+                  <motion.button
+                    key={card.name}
+                    onClick={() => setSelectedCard(card)}
+                    className="relative rounded-xl text-left shadow-lg outline-none focus:ring-4 focus:ring-white/20 overflow-hidden"
+                    style={{
+                      background: card.owned ? card.color : 'rgba(255, 255, 255, 0.1)',
+                      height: '150px',
+                      padding: '16px',
+                      filter: card.owned ? 'none' : 'grayscale(100%)',
+                      opacity: card.owned ? 1 : 0.5,
+                    }}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: card.owned ? 1 : 0.5, scale: 1 }}
+                    transition={{ duration: 0.2, delay: i * 0.05 }}
+                    whileHover={{ scale: 1.05, opacity: card.owned ? 1 : 0.7 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {/* Owned badge */}
+                    {card.owned && (
+                      <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+                        OWNED
+                      </div>
+                    )}
+
+                    {/* Unlocked badge */}
+                    {!card.owned && (
+                      <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+                        AVAILABLE
+                      </div>
+                    )}
+
+                    {/* Card icon */}
+                    <div className="absolute top-3 left-3">
+                      <CreditCard className="w-6 h-6 text-white/70" />
+                    </div>
+
+                    {/* Card info */}
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <div className="text-xs text-white/70 uppercase tracking-wide mb-1">{card.type}</div>
+                      <div className="text-sm font-bold text-white truncate">{card.name}</div>
+                      {card.owned && (
+                        <div className="text-xs text-white/60 font-mono mt-1">
+                          •••• {card.last4}
+                        </div>
+                      )}
+                      {!card.owned && (
+                        <div className="text-xs text-white/60 mt-1">
+                          Unlock to view details
+                        </div>
+                      )}
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+
+            {/* Collection stats */}
+            <div className="mt-6 pt-4 border-t border-white/20 flex items-center justify-between text-white/80 text-sm">
+              <div>
+                <span className="font-bold">{inventory.length}</span> Owned
+              </div>
+              <div>
+                <span className="font-bold">{allCards.length}</span> Total Available
+              </div>
             </div>
           </motion.div>
         </div>
+
+        {/* Card Details Modal */}
+        <AnimatePresence>
+          {selectedCard && (
+            <>
+              {/* Backdrop with blur */}
+              <motion.div
+                className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setSelectedCard(null)}
+              />
+              {/* Modal */}
+              <motion.div
+                className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <motion.div
+                  className="w-full max-w-md rounded-3xl overflow-hidden shadow-2xl"
+                  style={{ background: selectedCard.color }}
+                  initial={{ scale: 0.9, y: 20 }}
+                  animate={{ scale: 1, y: 0 }}
+                  exit={{ scale: 0.9, y: 20 }}
+                  transition={{ duration: 0.2, type: "spring", damping: 25 }}
+                >
+                  {/* Card preview in modal */}
+                  <div className="relative h-52 p-6">
+                    <div className="absolute top-6 right-6 w-12 h-10 rounded-md bg-gradient-to-br from-yellow-200/50 to-yellow-600/50 border border-white/30" />
+                    <div className="absolute top-6 left-6">
+                      <CreditCard className="w-8 h-8 text-white/70" />
+                    </div>
+                    <div className="absolute top-16 left-6">
+                      <div className="text-xs text-white/70 uppercase tracking-widest">{selectedCard.type}</div>
+                    </div>
+                    <div className="absolute bottom-16 left-6">
+                      <div className="text-2xl text-white font-mono tracking-wider">
+                        •••• •••• •••• {selectedCard.last4}
+                      </div>
+                    </div>
+                    <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end">
+                      <div>
+                        <div className="text-xs text-white/60 uppercase tracking-wide mb-1">Cardholder</div>
+                        <div className="text-base font-bold text-white uppercase">{selectedCard.name}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-white/60 uppercase tracking-wide mb-1">Valid</div>
+                        <div className="text-base font-bold text-white">12/27</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Details section */}
+                  <div className="bg-white/15 backdrop-blur-lg p-6">
+                    <div className="mb-4">
+                      <h3 className="text-sm font-semibold uppercase tracking-wide text-white/90 mb-3">
+                        Perks & Benefits
+                      </h3>
+                      <ul className="space-y-2 text-sm text-white">
+                        {selectedCard.perks.map((p) => (
+                          <li key={p} className="flex items-center gap-2">
+                            <span className="h-1.5 w-1.5 rounded-full bg-white/70 flex-shrink-0" />
+                            <span>{p}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      <div className="rounded-xl border border-white/20 bg-white/10 p-3">
+                        <div className="text-xs uppercase tracking-wide text-white/70">APR</div>
+                        <div className="text-sm font-semibold text-white mt-1">{selectedCard.apr}</div>
+                      </div>
+                      <div className="rounded-xl border border-white/20 bg-white/10 p-3">
+                        <div className="text-xs uppercase tracking-wide text-white/70">Limit</div>
+                        <div className="text-sm font-semibold text-white mt-1">{selectedCard.limit}</div>
+                      </div>
+                      <div className="rounded-xl border border-white/20 bg-white/10 p-3">
+                        <div className="text-xs uppercase tracking-wide text-white/70">Annual Fee</div>
+                        <div className="text-sm font-semibold text-white mt-1">$0</div>
+                      </div>
+                      <div className="rounded-xl border border-white/20 bg-white/10 p-3">
+                        <div className="text-xs uppercase tracking-wide text-white/70">Type</div>
+                        <div className="text-sm font-semibold text-white mt-1">{selectedCard.type}</div>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <Button
+                        className="flex-1 bg-white text-black hover:bg-white/90 font-medium"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedCard(null);
+                        }}
+                      >
+                        Manage Card
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="flex-1 border-2 border-white/40 text-white hover:bg-white/20"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedCard(null);
+                        }}
+                      >
+                        Close
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
 
         {/* Ideas Modal */}
         <Dialog

@@ -39,7 +39,10 @@ export default function UserProfileCard({ level, xp, userName = 'John Doe' }: Us
         onClick={() => setShowSettings(true)}
       >
         {/* Credit Card Profile */}
-        <div className={`w-64 h-40 bg-gradient-to-br ${style.bg} rounded-xl border-4 ${style.border} shadow-2xl ${style.glow} relative overflow-hidden`}>
+        <div
+          className={`h-24 bg-gradient-to-br ${style.bg} rounded-lg border-2 ${style.border} shadow-2xl ${style.glow} relative overflow-hidden`}
+          style={{ width: '160px' }}
+        >
           {/* Pixelated overlay */}
           <div
             className="absolute inset-0 opacity-20"
@@ -48,16 +51,16 @@ export default function UserProfileCard({ level, xp, userName = 'John Doe' }: Us
                 repeating-linear-gradient(
                   0deg,
                   transparent,
-                  transparent 4px,
-                  rgba(255, 255, 255, 0.1) 4px,
-                  rgba(255, 255, 255, 0.1) 5px
+                  transparent 3px,
+                  rgba(255, 255, 255, 0.1) 3px,
+                  rgba(255, 255, 255, 0.1) 4px
                 ),
                 repeating-linear-gradient(
                   90deg,
                   transparent,
-                  transparent 4px,
-                  rgba(255, 255, 255, 0.1) 4px,
-                  rgba(255, 255, 255, 0.1) 5px
+                  transparent 3px,
+                  rgba(255, 255, 255, 0.1) 3px,
+                  rgba(255, 255, 255, 0.1) 4px
                 )
               `,
             }}
@@ -67,29 +70,29 @@ export default function UserProfileCard({ level, xp, userName = 'John Doe' }: Us
           <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/20" />
 
           {/* Card Content */}
-          <div className="relative z-10 p-4 h-full flex flex-col justify-between">
+          <div className="relative z-10 p-2 h-full flex flex-col justify-center">
             {/* Top section */}
-            <div className="flex justify-between items-start">
+            <div className="flex justify-between items-start mb-1">
               <div>
-                <p className="text-white/80 text-xs">SWIPE SMART MEMBER</p>
-                <p className="text-white text-sm">Level {level}</p>
+                <p className="text-white/80 text-[8px]">MEMBER</p>
+                <p className="text-white text-[10px]">Level {level}</p>
               </div>
-              <Settings className="w-5 h-5 text-white/60" />
+              <Settings className="w-3 h-3 text-white/60" />
             </div>
 
             {/* Middle section - Name */}
-            <div>
-              <p className="text-white text-xl tracking-wider">{name.toUpperCase()}</p>
+            <div className="mb-1">
+              <p className="text-white text-sm tracking-wide truncate">{name.toUpperCase()}</p>
             </div>
 
             {/* Bottom section - XP & Level indicator */}
             <div className="flex justify-between items-end">
-              <div className="flex items-center gap-1 text-yellow-300">
-                <Zap className="w-4 h-4" />
-                <span className="text-sm">{xp} XP</span>
+              <div className="flex items-center gap-0.5 text-yellow-300">
+                <Zap className="w-3 h-3" />
+                <span className="text-[10px]">{xp} XP</span>
               </div>
-              <div className="text-white/60 text-xs">
-                MEMBER SINCE 2024
+              <div className="text-white/60 text-[8px]">
+                2024
               </div>
             </div>
           </div>

@@ -125,7 +125,11 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[#4962bf] text-foreground;
+  }
+
+  html {
+    @apply bg-[#4962bf];
   }
 }
 
@@ -186,4 +190,56 @@
 
 html {
   font-size: var(--font-size);
+}
+
+/* Custom scrollbar styling - only shows on hover */
+.scrollbar-custom {
+  scrollbar-width: thin !important;
+  scrollbar-color: #7b93e0 #3651a8 !important;
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 12px !important;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: #3651a8 !important;
+  border-radius: 6px !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #7b93e0 0%, #5a75d4 100%) !important;
+  border-radius: 6px !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 10px rgba(123, 147, 224, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #99aef0 0%, #7b93e0 100%) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 0 15px rgba(153, 174, 240, 0.7), inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, #5a75d4 0%, #4962bf 100%) !important;
+}
+
+/* Hide scrollbar by default, show on hover */
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+}
+
+.scrollbar-custom:hover::-webkit-scrollbar-thumb {
+  opacity: 1 !important;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+}
+
+.scrollbar-custom:hover::-webkit-scrollbar-track {
+  opacity: 1 !important;
 }
