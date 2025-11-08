@@ -39,6 +39,7 @@ enum Category {
   utilities
   streaming
   drugstore
+  entertainment
 }
 
 enum CardNetwork {
