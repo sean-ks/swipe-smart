@@ -8,7 +8,7 @@ declare
   v_report jsonb := '[]'::jsonb;
   c jsonb;
   card_row record;
-  cid uuid;
+  cid text;
   v_cards jsonb := coalesce(cards->'cards','[]'::jsonb);
 begin
   if jsonb_typeof(v_cards) <> 'array' then
@@ -20,23 +20,18 @@ begin
     from jsonb_array_elements(v_cards)
   loop
     c := card_row.value;
-    -- stable id from issuer|name if not provided
-    select coalesce(
-             (c->>'id')::uuid,
-             gen_random_uuid()  -- replace with your uuidv5 helper if you added one in DB
-           ) into cid;
 
-    -- upsert catalog
+    -- upsert catalog (conflict on issuer+name will return the existing or new id)
     insert into "CardsCatalog" as cc(
       id, name, issuer, network, "isChargeCard",
       "annualFeeCents", "feeCreditsCents", "minScoreBand",
       "valuationCpp", active, "sourceUrl", "termsUrl",
       "lastVerifiedAt", "cardMetadata", "createdAt", "updatedAt"
     ) values (
-      cid,
+      gen_random_uuid(),
       c->>'name',
       c->>'issuer',
-      upper(c->>'network'),
+      upper(c->>'network')::"CardNetwork",
       coalesce((c->>'isChargeCard')::boolean, false),
       coalesce((c->>'annualFeeCents')::int, 0),
       coalesce((c#>>'{feeCredits,totalAnnualCreditsCents}')::int, 0),
@@ -50,9 +45,8 @@ begin
       v_now,
       v_now
     )
-    on conflict (id) do update
+    on conflict (issuer, name) do update
       set name = excluded.name,
-          issuer = excluded.issuer,
           network = excluded.network,
           "isChargeCard" = excluded."isChargeCard",
           "annualFeeCents" = excluded."annualFeeCents",
@@ -64,7 +58,8 @@ begin
           "termsUrl" = excluded."termsUrl",
           "lastVerifiedAt" = excluded."lastVerifiedAt",
           "cardMetadata" = excluded."cardMetadata",
-          "updatedAt" = v_now;
+          "updatedAt" = v_now
+    returning id into cid;
 
     -- wipe children
     delete from "CardEarnRate" where "cardId" = cid;
@@ -81,7 +76,7 @@ begin
     -- earn rates
     insert into "CardEarnRate"("id","cardId","category","ratePct","capAmountCents","capWindowMonths","merchantsInclude","note","isRotating")
     select gen_random_uuid(), cid,
-           er->>'category',
+           (er->>'category')::"Category",
            nullif(er->>'ratePct','')::numeric,
            nullif(er#>>'{cap,amountCents}','')::int,
            nullif(er#>>'{cap,windowMonths}','')::int,
@@ -89,6 +84,18 @@ begin
            er->>'note',
            coalesce((er->>'isRotating')::boolean, false)
     from jsonb_array_elements(coalesce(c#>'{rewards,earnRates}','[]'::jsonb)) er;
+
+    -- add baseRatePct as general category if it exists and no general category already defined
+    if (c#>>'{rewards,baseRatePct}') is not null
+       and not exists (
+         select 1 from "CardEarnRate"
+         where "cardId" = cid and category = 'general'
+       ) then
+      insert into "CardEarnRate"("id","cardId","category","ratePct","note","isRotating")
+      values (gen_random_uuid(), cid, 'general',
+              nullif(c#>>'{rewards,baseRatePct}','')::numeric,
+              'Base rate on all purchases', false);
+    end if;
 
     -- bonuses
     insert into "CardBonus"("id","cardId","kind","points","cashCents","windowMonths","minSpendCents","expirationText","footnotes")
