@@ -19,6 +19,12 @@ CREATE TYPE "SwitchEventStatus" AS ENUM ('queued', 'in_progress', 'updated', 'er
 -- CreateEnum
 CREATE TYPE "AuditArtifactType" AS ENUM ('CSV', 'JSON', 'PDF');
 
+-- CreateEnum
+CREATE TYPE "BonusKind" AS ENUM ('WELCOME', 'UPGRADE', 'REFERRAL', 'TARGETED', 'OTHER');
+
+-- CreateEnum
+CREATE TYPE "ForeignTxnType" AS ENUM ('NONE', 'PERCENT');
+
 -- CreateTable
 CREATE TABLE "Profile" (
     "userId" UUID NOT NULL,
@@ -71,9 +77,14 @@ CREATE TABLE "CardsCatalog" (
     "isChargeCard" BOOLEAN NOT NULL DEFAULT false,
     "annualFeeCents" INTEGER NOT NULL DEFAULT 0,
     "feeCreditsCents" INTEGER NOT NULL DEFAULT 0,
-    "minScoreBand" "ScoreBand" NOT NULL,
-    "valuationCpp" DECIMAL(6,3) NOT NULL,
+    "minScoreBand" "ScoreBand",
+    "valuationCpp" DECIMAL(6,3),
     "active" BOOLEAN NOT NULL DEFAULT true,
+    "currencyProgram" TEXT,
+    "sourceUrl" TEXT,
+    "termsUrl" TEXT,
+    "lastVerifiedAt" TIMESTAMP(3),
+    "cardMetadata" JSONB,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -86,6 +97,11 @@ CREATE TABLE "CardEarnRate" (
     "cardId" TEXT NOT NULL,
     "category" "Category" NOT NULL,
     "ratePct" DECIMAL(6,4) NOT NULL,
+    "capAmountCents" INTEGER,
+    "capWindowMonths" INTEGER,
+    "merchantsInclude" JSONB,
+    "note" TEXT,
+    "isRotating" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "CardEarnRate_pkey" PRIMARY KEY ("id")
 );
@@ -94,10 +110,13 @@ CREATE TABLE "CardEarnRate" (
 CREATE TABLE "CardBonus" (
     "id" TEXT NOT NULL,
     "cardId" TEXT NOT NULL,
+    "kind" "BonusKind" NOT NULL DEFAULT 'WELCOME',
     "points" INTEGER,
     "cashCents" INTEGER,
     "windowMonths" INTEGER NOT NULL,
     "minSpendCents" INTEGER NOT NULL,
+    "expirationText" TEXT,
+    "footnotes" TEXT[],
 
     CONSTRAINT "CardBonus_pkey" PRIMARY KEY ("id")
 );
@@ -108,6 +127,95 @@ CREATE TABLE "CardPacing" (
     "minDaysBetweenNewCards" INTEGER NOT NULL DEFAULT 90,
 
     CONSTRAINT "CardPacing_pkey" PRIMARY KEY ("cardId")
+);
+
+-- CreateTable
+CREATE TABLE "CardAPR" (
+    "cardId" TEXT NOT NULL,
+    "purchaseAPRMinPct" DECIMAL(5,2),
+    "purchaseAPRMaxPct" DECIMAL(5,2),
+    "purchaseAPRType" TEXT,
+    "indexName" TEXT,
+    "btAPRMinPct" DECIMAL(5,2),
+    "btAPRMaxPct" DECIMAL(5,2),
+    "introBtPct" DECIMAL(5,2),
+    "introBtMonths" INTEGER,
+    "introBtFeePct" DECIMAL(5,2),
+    "introBtFeeMinCents" INTEGER,
+    "cashAdvanceAPR" DECIMAL(5,2),
+    "penaltyAPR" DECIMAL(5,2),
+
+    CONSTRAINT "CardAPR_pkey" PRIMARY KEY ("cardId")
+);
+
+-- CreateTable
+CREATE TABLE "CardFees" (
+    "cardId" TEXT NOT NULL,
+    "foreignTransactionType" "ForeignTxnType" NOT NULL DEFAULT 'NONE',
+    "foreignTransactionPct" DECIMAL(5,2),
+    "balanceTransferFeePct" DECIMAL(5,2),
+    "balanceTransferFeeMinCents" INTEGER,
+    "cashAdvanceFeePct" DECIMAL(5,2),
+    "cashAdvanceFeeMinCents" INTEGER,
+    "lateFeeCents" INTEGER,
+    "returnedPaymentFeeCents" INTEGER,
+
+    CONSTRAINT "CardFees_pkey" PRIMARY KEY ("cardId")
+);
+
+-- CreateTable
+CREATE TABLE "CardBenefit" (
+    "id" TEXT NOT NULL,
+    "cardId" TEXT NOT NULL,
+    "label" TEXT NOT NULL,
+    "section" TEXT,
+    "priority" INTEGER,
+
+    CONSTRAINT "CardBenefit_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CardEligibility" (
+    "cardId" TEXT NOT NULL,
+    "suggestedHistoryYears" INTEGER,
+    "utilizationNote" TEXT,
+    "otherNotes" TEXT[],
+
+    CONSTRAINT "CardEligibility_pkey" PRIMARY KEY ("cardId")
+);
+
+-- CreateTable
+CREATE TABLE "CardTransferPartner" (
+    "id" TEXT NOT NULL,
+    "cardId" TEXT NOT NULL,
+    "program" TEXT NOT NULL,
+    "ratioFrom" INTEGER,
+    "ratioTo" INTEGER,
+    "multiplier" DECIMAL(6,3),
+    "note" TEXT,
+
+    CONSTRAINT "CardTransferPartner_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CardRotatingSchedule" (
+    "id" TEXT NOT NULL,
+    "cardId" TEXT NOT NULL,
+    "scheduleNote" TEXT,
+    "year" INTEGER,
+    "quarter" INTEGER,
+    "categories" TEXT[],
+
+    CONSTRAINT "CardRotatingSchedule_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CardAsset" (
+    "id" TEXT NOT NULL,
+    "cardId" TEXT NOT NULL,
+    "cardArtUrl" TEXT,
+
+    CONSTRAINT "CardAsset_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -246,13 +354,26 @@ CREATE INDEX "CardsCatalog_issuer_idx" ON "CardsCatalog"("issuer");
 CREATE INDEX "CardsCatalog_network_idx" ON "CardsCatalog"("network");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "CardsCatalog_issuer_name_key" ON "CardsCatalog"("issuer", "name");
+
+-- CreateIndex
 CREATE INDEX "CardEarnRate_cardId_idx" ON "CardEarnRate"("cardId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "CardEarnRate_cardId_category_key" ON "CardEarnRate"("cardId", "category");
+-- CreateIndex
+CREATE INDEX "CardBonus_cardId_kind_idx" ON "CardBonus"("cardId", "kind");
 
 -- CreateIndex
-CREATE INDEX "CardBonus_cardId_idx" ON "CardBonus"("cardId");
+CREATE INDEX "CardBenefit_cardId_idx" ON "CardBenefit"("cardId");
+
+-- CreateIndex
+CREATE INDEX "CardTransferPartner_cardId_program_idx" ON "CardTransferPartner"("cardId", "program");
+
+-- CreateIndex
+CREATE INDEX "CardRotatingSchedule_cardId_year_quarter_idx" ON "CardRotatingSchedule"("cardId", "year", "quarter");
+
+-- CreateIndex
+CREATE INDEX "CardAsset_cardId_idx" ON "CardAsset"("cardId");
 
 -- CreateIndex
 CREATE INDEX "UserCard_userId_idx" ON "UserCard"("userId");
@@ -313,6 +434,27 @@ ALTER TABLE "CardBonus" ADD CONSTRAINT "CardBonus_cardId_fkey" FOREIGN KEY ("car
 
 -- AddForeignKey
 ALTER TABLE "CardPacing" ADD CONSTRAINT "CardPacing_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "CardsCatalog"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CardAPR" ADD CONSTRAINT "CardAPR_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "CardsCatalog"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CardFees" ADD CONSTRAINT "CardFees_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "CardsCatalog"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CardBenefit" ADD CONSTRAINT "CardBenefit_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "CardsCatalog"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CardEligibility" ADD CONSTRAINT "CardEligibility_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "CardsCatalog"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CardTransferPartner" ADD CONSTRAINT "CardTransferPartner_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "CardsCatalog"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CardRotatingSchedule" ADD CONSTRAINT "CardRotatingSchedule_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "CardsCatalog"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CardAsset" ADD CONSTRAINT "CardAsset_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "CardsCatalog"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserCard" ADD CONSTRAINT "UserCard_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Profile"("userId") ON DELETE CASCADE ON UPDATE CASCADE;

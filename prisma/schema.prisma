@@ -68,6 +68,18 @@ enum AuditArtifactType {
   PDF
 }
 
+enum BonusKind {
+  WELCOME
+  UPGRADE
+  REFERRAL
+  TARGETED
+  OTHER
+}
+
+enum ForeignTxnType {
+  NONE
+  PERCENT
+}
 //// Core user ///////////////////////////////////////////////////////////
 
 model Profile {
@@ -137,48 +149,73 @@ model CardsCatalog {
   isChargeCard    Boolean     @default(false)
   annualFeeCents  Int         @default(0)
   feeCreditsCents Int         @default(0)
-  minScoreBand    ScoreBand
-  valuationCpp    Decimal     @db.Decimal(6, 3) // cents per point
+  minScoreBand    ScoreBand?
+  valuationCpp    Decimal?    @db.Decimal(6, 3)
   active          Boolean     @default(true)
+
+  // NEW provenance / metadata
+  currencyProgram String?
+  sourceUrl       String?
+  termsUrl        String?
+  lastVerifiedAt  DateTime?
+  cardMetadata    Json?
+
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
   earnRates        CardEarnRate[]
   bonuses          CardBonus[]
   pacing           CardPacing?
+  apr              CardAPR?
+  fees             CardFees?
+  eligibility      CardEligibility?
+  benefits         CardBenefit[]
+  partners         CardTransferPartner[]
+  rotating         CardRotatingSchedule[]
+  assets           CardAsset[]
+
   userCards        UserCard[]
   bonusProgress    BonusProgress[]
   recPicks         RecommendationPick[]
   routingAsNewCard RoutingRecommendation[] @relation("RoutingNewCard")
 
+  @@unique([issuer, name])
   @@index([active])
   @@index([issuer])
   @@index([network])
 }
 
 model CardEarnRate {
-  id       String   @id @default(uuid())
-  cardId   String
-  category Category
-  ratePct  Decimal  @db.Decimal(6, 4) // e.g., 0.0600 for 6%
+  id                String    @id @default(uuid())
+  cardId            String
+  category          Category
+  ratePct           Decimal   @db.Decimal(6, 4)
+  // NEW
+  capAmountCents    Int?
+  capWindowMonths   Int?
+  merchantsInclude  Json?
+  note              String?
+  isRotating        Boolean   @default(false)
 
   card CardsCatalog @relation(fields: [cardId], references: [id], onDelete: Cascade)
-
-  @@unique([cardId, category])
   @@index([cardId])
 }
 
 model CardBonus {
   id            String @id @default(uuid())
   cardId        String
+  kind		BonusKind @default(WELCOME)
   points        Int? // either points or cashCents
   cashCents     Int?
   windowMonths  Int // e.g., 3
   minSpendCents Int
+  
+  expirationText String?
+  footnotes      String[] 
 
   card CardsCatalog @relation(fields: [cardId], references: [id], onDelete: Cascade)
 
-  @@index([cardId])
+  @@index([cardId, kind])
 }
 
 model CardPacing {
@@ -187,6 +224,91 @@ model CardPacing {
 
   card CardsCatalog @relation(fields: [cardId], references: [id], onDelete: Cascade)
 }
+
+model CardAPR {
+  cardId               String  @id
+  purchaseAPRMinPct    Decimal? @db.Decimal(5, 2)
+  purchaseAPRMaxPct    Decimal? @db.Decimal(5, 2)
+  purchaseAPRType      String?
+  indexName            String?
+  btAPRMinPct          Decimal? @db.Decimal(5, 2)
+  btAPRMaxPct          Decimal? @db.Decimal(5, 2)
+  introBtPct           Decimal? @db.Decimal(5, 2)
+  introBtMonths        Int?
+  introBtFeePct        Decimal? @db.Decimal(5, 2)
+  introBtFeeMinCents   Int?
+  cashAdvanceAPR       Decimal? @db.Decimal(5, 2)
+  penaltyAPR           Decimal? @db.Decimal(5, 2)
+  card CardsCatalog @relation(fields: [cardId], references: [id], onDelete: Cascade)
+}
+
+model CardFees {
+  cardId                     String @id
+  foreignTransactionType     ForeignTxnType @default(NONE)
+  foreignTransactionPct      Decimal? @db.Decimal(5, 2)
+  balanceTransferFeePct      Decimal? @db.Decimal(5, 2)
+  balanceTransferFeeMinCents Int?
+  cashAdvanceFeePct          Decimal? @db.Decimal(5, 2)
+  cashAdvanceFeeMinCents     Int?
+  lateFeeCents               Int?
+  returnedPaymentFeeCents    Int?
+
+  card CardsCatalog @relation(fields: [cardId], references: [id], onDelete: Cascade)
+}
+
+
+model CardBenefit {
+  id       String  @id @default(uuid())
+  cardId   String
+  label    String
+  section  String?
+  priority Int?
+  card CardsCatalog @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  @@index([cardId])
+}
+
+
+model CardEligibility {
+  cardId                String @id
+  suggestedHistoryYears Int?
+  utilizationNote       String?
+  otherNotes            String[]
+  card CardsCatalog @relation(fields: [cardId], references: [id], onDelete: Cascade)
+}
+
+
+model CardTransferPartner {
+  id         String   @id @default(uuid())
+  cardId     String
+  program    String
+  ratioFrom  Int?
+  ratioTo    Int?
+  multiplier Decimal? @db.Decimal(6, 3)
+  note       String?
+  card CardsCatalog @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  @@index([cardId, program])
+}
+
+
+model CardRotatingSchedule {
+  id           String   @id @default(uuid())
+  cardId       String
+  scheduleNote String?
+  year         Int?
+  quarter      Int?
+  categories   String[]
+  card CardsCatalog @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  @@index([cardId, year, quarter])
+}
+
+model CardAsset {
+  id         String  @id @default(uuid())
+  cardId     String
+  cardArtUrl String?
+  card CardsCatalog @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  @@index([cardId])
+}
+
 
 //// User wallet and merchants /////////////////////////////////////////
 

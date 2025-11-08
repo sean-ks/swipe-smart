@@ -1,0 +1,1497 @@
+version: 1
+generatedAt: '2025-11-08'
+notes: Issuer-only sources used where available. Some cards are placeholders without
+  data due to limited access.
+enums:
+  CardNetwork:
+  - VISA
+  - MASTERCARD
+  - AMEX
+  - DISCOVER
+  ScoreBand:
+  - BAND_660_699
+  - BAND_700_749
+  - BAND_750_PLUS
+  Category:
+  - groceries
+  - dining
+  - gas
+  - transit
+  - travel
+  - online
+  - general
+  - utilities
+  - streaming
+  - drugstore
+cards:
+- name: Chase Sapphire Preferred
+  issuer: Chase
+  network: VISA
+  isChargeCard: false
+  annualFeeCents: 9500
+  feeCredits:
+    totalAnnualCreditsCents: 5000
+    items:
+    - name: Annual hotel credit
+      amountCents: 5000
+      cadence: annual
+      conditions: $50 credit toward hotel bookings through Chase Travel
+  minScoreBand: BAND_700_749
+  valuationCpp: 1.25
+  active: true
+  rewards:
+    baseRatePct: 0.01
+    earnRates:
+    - category: travel
+      ratePct: 0.05
+      note: 5X on travel purchased through Chase Travel
+    - category: travel
+      ratePct: 0.02
+      note: 2X on other travel purchases
+    - category: dining
+      ratePct: 0.03
+      note: 3X on dining
+    - category: online
+      ratePct: 0.03
+      note: 3X on online grocery purchases
+    - category: streaming
+      ratePct: 0.03
+      note: 3X on select streaming services
+    - category: general
+      ratePct: 0.01
+      note: 1X on other purchases
+  bonuses:
+  - kind: welcome
+    points: 75000
+    cashCents: null
+    windowMonths: 3
+    minSpendCents: 500000
+    expirationText: Limited time offer as of citation date
+    footnotes:
+    - "Earn 75,000 bonus points after spending $5,000 in the first 3 months\u3010\
+      457572089613705\u2020L266-L268\u3011."
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 20.74
+        max: 27.49
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 20.74
+        max: 27.49
+      introOffer:
+        introPct: 0.0
+        introMonths: 0
+        fee:
+          pct: 0.03
+          minCents: 500
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0.03
+      minCents: 500
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
+  eligibility:
+    suggestedHistoryYears: 3
+    utilizationNote: Maintain good credit utilization
+    otherNotes: []
+  benefits:
+  - "10% anniversary points boost on purchases from previous year\u3010457572089613705\u2020\
+    L308-L309\u3011"
+  - Point transfers to airline and hotel partners
+  - Travel and purchase protections
+  cashbackTable:
+    rows:
+    - category: travel
+      ratePct: 0.05
+    - category: dining
+      ratePct: 0.03
+    - category: general
+      ratePct: 0.01
+  scraping:
+    source: issuer
+    sourceUrl: https://creditcards.chase.com/
+    termsUrl: null
+    lastVerifiedAt: '2025-11-08'
+    evidence:
+    - selector: earn section
+      text: "5X on travel purchased through Chase Travel, 2X on other travel, 3X on\
+        \ dining, online grocery purchases and select streaming services\u3010457572089613705\u2020\
+        L293-L306\u3011"
+- name: Chase Sapphire Reserve
+  issuer: Chase
+  network: VISA
+  isChargeCard: false
+  annualFeeCents: 79500
+  feeCredits:
+    totalAnnualCreditsCents: 30000
+    items:
+    - name: Annual travel credit
+      amountCents: 30000
+      cadence: annual
+      conditions: Automatic credit for travel purchases
+  minScoreBand: BAND_750_PLUS
+  valuationCpp: 1.5
+  active: true
+  rewards:
+    baseRatePct: 0.01
+    earnRates:
+    - category: travel
+      ratePct: 0.08
+      note: 8X on travel purchased through Chase Travel
+    - category: travel
+      ratePct: 0.04
+      note: 4X on flights and hotels booked direct
+    - category: dining
+      ratePct: 0.03
+      note: 3X on dining
+    - category: general
+      ratePct: 0.01
+      note: 1X on other purchases
+  bonuses:
+  - kind: welcome
+    points: 125000
+    cashCents: null
+    windowMonths: 3
+    minSpendCents: 600000
+    expirationText: Limited time offer
+    footnotes:
+    - "Earn 125,000 bonus points after you spend $6,000 on purchases in the first\
+      \ 3 months\u3010240904728018549\u2020L190-L195\u3011."
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 22.74
+        max: 29.49
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 22.74
+        max: 29.49
+      introOffer:
+        introPct: 0.0
+        introMonths: 0
+        fee:
+          pct: 0.05
+          minCents: 500
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0.05
+      minCents: 500
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
+  eligibility:
+    suggestedHistoryYears: 5
+    utilizationNote: Maintain excellent credit
+    otherNotes: []
+  benefits:
+  - Priority lounge membership and airport lounge access
+  - Global Entry/TSA PreCheck fee credit
+  - Hotel and travel benefits
+  cashbackTable:
+    rows:
+    - category: travel
+      ratePct: 0.08
+    - category: dining
+      ratePct: 0.03
+    - category: general
+      ratePct: 0.01
+  scraping:
+    source: issuer
+    sourceUrl: https://creditcards.chase.com/
+    termsUrl: null
+    lastVerifiedAt: '2025-11-08'
+    evidence:
+    - selector: earn section
+      text: "8X on travel purchased through Chase Travel, 4X on flights and hotels\
+        \ booked direct, 3X on dining, 1X on other purchases\u3010240904728018549\u2020\
+        L220-L238\u3011"
+- name: Chase Freedom Unlimited
+  issuer: Chase
+  network: VISA
+  isChargeCard: false
+  annualFeeCents: 0
+  feeCredits:
+    totalAnnualCreditsCents: 0
+    items: []
+  minScoreBand: BAND_660_699
+  valuationCpp: 1.0
+  active: true
+  rewards:
+    baseRatePct: 0.015
+    earnRates:
+    - category: travel
+      ratePct: 0.05
+      note: 5% on travel purchased through Chase Travel
+    - category: dining
+      ratePct: 0.03
+      note: 3% on dining
+    - category: general
+      ratePct: 0.015
+      note: 1.5% on all other purchases
+    - category: drugstore
+      ratePct: 0.03
+      note: 3% on drugstore purchases
+  bonuses:
+  - kind: welcome
+    points: null
+    cashCents: 20000
+    windowMonths: 3
+    minSpendCents: 50000
+    expirationText: Limited time offer
+    footnotes:
+    - "Earn a $200 bonus after you spend $500 on purchases in the first 3 months\u3010\
+      680158151593679\u2020L205-L209\u3011."
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 19.24
+        max: 27.99
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 19.24
+        max: 27.99
+      introOffer:
+        introPct: 0.0
+        introMonths: 15
+        fee:
+          pct: 0.03
+          minCents: 500
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: percent
+      pct: 0.03
+    balanceTransferFee:
+      pct: 0.03
+      minCents: 500
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
+  eligibility:
+    suggestedHistoryYears: 2
+    utilizationNote: Good credit
+    otherNotes: []
+  benefits:
+  - "0% intro APR on purchases for 15 months\u3010680158151593679\u2020L219-L223\u3011"
+  - Extended warranty and purchase protection
+  cashbackTable:
+    rows:
+    - category: travel
+      ratePct: 0.05
+    - category: dining
+      ratePct: 0.03
+    - category: general
+      ratePct: 0.015
+    - category: drugstore
+      ratePct: 0.03
+  scraping:
+    source: issuer
+    sourceUrl: https://creditcards.chase.com/
+    termsUrl: null
+    lastVerifiedAt: '2025-11-08'
+    evidence:
+    - selector: earn section
+      text: "5% on travel purchased through Chase Travel, 3% on dining and drugstore\
+        \ purchases, 1.5% on all other purchases\u3010680158151593679\u2020L214-L216\u3011"
+- name: Chase Freedom Flex
+  issuer: Chase
+  network: MASTERCARD
+  isChargeCard: false
+  annualFeeCents: 0
+  feeCredits:
+    totalAnnualCreditsCents: 0
+    items: []
+  minScoreBand: BAND_660_699
+  valuationCpp: 1.0
+  active: true
+  rewards:
+    baseRatePct: 0.01
+    earnRates:
+    - category: general
+      ratePct: 0.01
+      note: 1% on all other purchases
+    - category: travel
+      ratePct: 0.05
+      note: 5% on travel purchased through Chase Travel
+    - category: dining
+      ratePct: 0.03
+      note: 3% on dining
+    - category: drugstore
+      ratePct: 0.03
+      note: 3% on drugstore purchases
+    - category: general
+      ratePct: 0.05
+      note: "5% cash back on up to $1,500 in combined purchases in bonus categories\
+        \ each quarter you activate\u3010576655912891818\u2020L213-L216\u3011"
+  bonuses:
+  - kind: welcome
+    points: null
+    cashCents: 20000
+    windowMonths: 3
+    minSpendCents: 50000
+    expirationText: Limited time offer
+    footnotes:
+    - "$200 cash back after you spend $500 on purchases in first 3 months\u3010576655912891818\u2020\
+      L240-L245\u3011."
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 19.24
+        max: 27.99
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 19.24
+        max: 27.99
+      introOffer:
+        introPct: 0.0
+        introMonths: 15
+        fee:
+          pct: 0.03
+          minCents: 500
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: percent
+      pct: 0.03
+    balanceTransferFee:
+      pct: 0.03
+      minCents: 500
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
+  eligibility:
+    suggestedHistoryYears: 2
+    utilizationNote: Good credit
+    otherNotes: []
+  benefits:
+  - "0% intro APR for 15 months on purchases and balance transfers\u3010576655912891818\u2020\
+    L218-L224\u3011"
+  - Cell phone protection
+  cashbackTable:
+    rows:
+    - category: travel
+      ratePct: 0.05
+    - category: dining
+      ratePct: 0.03
+    - category: general
+      ratePct: 0.01
+  scraping:
+    source: issuer
+    sourceUrl: https://creditcards.chase.com/
+    termsUrl: null
+    lastVerifiedAt: '2025-11-08'
+    evidence:
+    - selector: earn section
+      text: "5% cash back on up to $1,500 in combined purchases in bonus categories\
+        \ each quarter, 5% on travel through Chase Travel, 3% on dining and drugstores,\
+        \ 1% on other purchases\u3010576655912891818\u2020L213-L216\u3011"
+- name: American Express Gold Card
+  issuer: American Express
+  network: AMEX
+  isChargeCard: false
+  annualFeeCents: 32500
+  feeCredits:
+    totalAnnualCreditsCents: 42400
+    items:
+    - name: Uber Cash credit
+      amountCents: 12000
+      cadence: annual
+      conditions: $10 monthly Uber Cash credit
+    - name: "Dunkin\u2019 credit"
+      amountCents: 8400
+      cadence: annual
+      conditions: "$7 monthly credit at Dunkin\u2019"
+    - name: Resy credit
+      amountCents: 10000
+      cadence: annual
+      conditions: $100 annual statement credit after dining on Resy
+    - name: Dining credit
+      amountCents: 12000
+      cadence: annual
+      conditions: $10 monthly dining credit at select restaurants
+  minScoreBand: BAND_700_749
+  valuationCpp: 1.5
+  active: true
+  rewards:
+    baseRatePct: 0.01
+    earnRates:
+    - category: dining
+      ratePct: 0.04
+      note: "4X points on restaurants worldwide plus takeout and delivery in the U.S.\u3010\
+        920425573020259\u2020L650-L688\u3011"
+    - category: groceries
+      ratePct: 0.04
+      note: "4X points on groceries at U.S. supermarkets (up to $25k per year)\u3010\
+        920425573020259\u2020L650-L688\u3011"
+    - category: travel
+      ratePct: 0.03
+      note: "3X points on flights booked directly with airlines or on AmexTravel.com\u3010\
+        920425573020259\u2020L650-L688\u3011"
+    - category: travel
+      ratePct: 0.02
+      note: "2X points on prepaid hotels and other eligible travel through Amex Travel\u3010\
+        920425573020259\u2020L650-L688\u3011"
+    - category: general
+      ratePct: 0.01
+      note: 1X on other purchases
+  bonuses:
+  - kind: welcome
+    points: 100000
+    cashCents: null
+    windowMonths: 6
+    minSpendCents: 600000
+    expirationText: Resy welcome offer
+    footnotes:
+    - "Earn up to 100,000 Membership Rewards points after spending $6,000 in purchases\
+      \ on your new Card within the first 6 months\u3010365250988843190\u2020screenshot\u3011\
+      ."
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 20.24
+        max: 28.24
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 20.24
+        max: 28.24
+      introOffer:
+        introPct: 0.0
+        introMonths: 0
+        fee:
+          pct: 0.03
+          minCents: 0
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0.03
+      minCents: 0
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
+  eligibility:
+    suggestedHistoryYears: 3
+    utilizationNote: Good credit score (670+)
+    otherNotes: []
+  benefits:
+  - "$120 Uber Cash, $84 Dunkin\u2019 credit, $100 Resy credit, $120 dining credit\u3010\
+    920425573020259\u2020L665-L672\u3011"
+  - "4X points on dining and groceries, 3X on flights, 2X on prepaid hotels\u3010\
+    920425573020259\u2020L650-L688\u3011"
+  cashbackTable:
+    rows:
+    - category: dining
+      ratePct: 0.04
+    - category: groceries
+      ratePct: 0.04
+    - category: travel
+      ratePct: 0.03
+  scraping:
+    source: issuer
+    sourceUrl: https://www.americanexpress.com/
+    termsUrl: null
+    lastVerifiedAt: '2025-11-08'
+    evidence:
+    - selector: earn section
+      text: "4X points on restaurants and groceries, 3X on flights, 2X on prepaid\
+        \ hotels\u3010920425573020259\u2020L650-L688\u3011"
+- name: Blue Cash Preferred
+  issuer: American Express
+  network: AMEX
+  isChargeCard: false
+  annualFeeCents: 9500
+  feeCredits:
+    totalAnnualCreditsCents: 0
+    items: []
+  minScoreBand: BAND_660_699
+  valuationCpp: 1.0
+  active: true
+  rewards:
+    baseRatePct: 0.01
+    earnRates:
+    - category: groceries
+      ratePct: 0.06
+      note: "6% cash back at U.S. supermarkets on up to $6,000 per year, then 1%\u3010\
+        679901062153023\u2020L643-L657\u3011"
+    - category: streaming
+      ratePct: 0.06
+      note: "6% cash back on select U.S. streaming subscriptions\u3010679901062153023\u2020\
+        L643-L657\u3011"
+    - category: transit
+      ratePct: 0.03
+      note: "3% cash back on transit including trains, taxis, rideshare, parking,\
+        \ etc.\u3010679901062153023\u2020L643-L657\u3011"
+    - category: gas
+      ratePct: 0.03
+      note: "3% cash back at U.S. gas stations\u3010679901062153023\u2020L643-L657\u3011"
+    - category: general
+      ratePct: 0.01
+      note: 1% on other purchases
+  bonuses:
+  - kind: welcome
+    points: null
+    cashCents: null
+    windowMonths: null
+    minSpendCents: null
+    expirationText: null
+    footnotes: []
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 19.24
+        max: 29.99
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 19.24
+        max: 29.99
+      introOffer:
+        introPct: 0.0
+        introMonths: 0
+        fee:
+          pct: 0.03
+          minCents: 0
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0.03
+      minCents: 0
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
+  eligibility:
+    suggestedHistoryYears: 2
+    utilizationNote: Good credit score
+    otherNotes: []
+  benefits:
+  - "6% cash back on U.S. supermarkets and select streaming services; 3% on transit\
+    \ and U.S. gas stations; 1% on other purchases\u3010679901062153023\u2020L643-L657\u3011"
+  cashbackTable:
+    rows:
+    - category: groceries
+      ratePct: 0.06
+    - category: streaming
+      ratePct: 0.06
+    - category: transit
+      ratePct: 0.03
+    - category: gas
+      ratePct: 0.03
+    - category: general
+      ratePct: 0.01
+  scraping:
+    source: issuer
+    sourceUrl: https://www.americanexpress.com/
+    termsUrl: null
+    lastVerifiedAt: '2025-11-08'
+    evidence:
+    - selector: earn section
+      text: "6% cash back at U.S. supermarkets up to $6k per year, 6% on select streaming,\
+        \ 3% on transit, 3% on U.S. gas stations, 1% on other purchases\u3010679901062153023\u2020\
+        L643-L657\u3011"
+- name: Capital One Venture Rewards
+  issuer: Capital One
+  network: VISA
+  isChargeCard: false
+  annualFeeCents: 9500
+  feeCredits:
+    totalAnnualCreditsCents: 0
+    items: []
+  minScoreBand: BAND_700_749
+  valuationCpp: 1.0
+  active: true
+  rewards:
+    baseRatePct: 0.02
+    earnRates:
+    - category: travel
+      ratePct: 0.05
+      note: 5X miles on hotels and rental cars booked through Capital One Travel and
+        Entertainment
+    - category: travel
+      ratePct: 0.02
+      note: 2X miles on every purchase
+  bonuses:
+  - kind: welcome
+    points: 75000
+    cashCents: null
+    windowMonths: 3
+    minSpendCents: 400000
+    expirationText: Limited time offer
+    footnotes:
+    - "Earn 75,000 miles after spending $4,000 on purchases within the first 3 months\u3010\
+      735840790141065\u2020L383-L435\u3011."
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 19.24
+        max: 29.24
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 19.24
+        max: 29.24
+      introOffer:
+        introPct: 0.0
+        introMonths: 0
+        fee:
+          pct: 0.03
+          minCents: 0
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0.03
+      minCents: 0
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
+  eligibility:
+    suggestedHistoryYears: 2
+    utilizationNote: "Excellent credit recommended\u3010735840790141065\u2020L432-L436\u3011"
+    otherNotes: []
+  benefits:
+  - "Earn unlimited 2X miles on every purchase and 5X on hotels and rental cars booked\
+    \ through Capital One Travel\u3010735840790141065\u2020L414-L423\u3011"
+  - Transfer miles to partner travel loyalty programs
+  cashbackTable:
+    rows:
+    - category: travel
+      ratePct: 0.05
+    - category: general
+      ratePct: 0.02
+  scraping:
+    source: issuer
+    sourceUrl: https://www.capitalone.com/
+    termsUrl: null
+    lastVerifiedAt: '2025-11-08'
+    evidence:
+    - selector: rewards section
+      text: "2X miles on every purchase and 5X miles on hotels and car rentals booked\
+        \ through Capital One Travel\u3010735840790141065\u2020L414-L423\u3011"
+- name: Blue Cash Everyday
+  issuer: American Express
+  network: AMEX
+  isChargeCard: false
+  annualFeeCents: null
+  feeCredits:
+    totalAnnualCreditsCents: null
+    items: []
+  minScoreBand: null
+  valuationCpp: null
+  active: true
+  rewards:
+    baseRatePct: null
+    earnRates: []
+  bonuses: []
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr: {}
+  fees: {}
+  eligibility:
+    suggestedHistoryYears: null
+    utilizationNote: null
+    otherNotes: []
+  benefits: []
+  cashbackTable:
+    rows: []
+  scraping:
+    source: null
+    sourceUrl: null
+    termsUrl: null
+    lastVerifiedAt: null
+    evidence: []
+- name: Capital One Venture X
+  issuer: Capital One
+  network: VISA
+  isChargeCard: false
+  annualFeeCents: 39500
+  feeCredits:
+    totalAnnualCreditsCents: 50000
+    items:
+    - name: Annual travel credit
+      amountCents: 30000
+      cadence: annual
+      conditions: Automatic statement credit for travel purchases booked through Capital
+        One Travel
+    - name: Anniversary bonus miles
+      amountCents: 10000
+      cadence: annual
+      conditions: 10,000 bonus miles on account anniversary (approx. $100 toward travel)
+    - name: Global Entry/TSA PreCheck credit
+      amountCents: 10000
+      cadence: per 4 years
+      conditions: Reimbursement for one Global Entry or TSA PreCheck application fee
+  minScoreBand: BAND_750_PLUS
+  valuationCpp: 1.0
+  active: true
+  rewards:
+    baseRatePct: 0.02
+    earnRates:
+    - category: travel
+      ratePct: 0.1
+      note: 10X miles on hotels and rental cars booked through Capital One Travel
+    - category: travel
+      ratePct: 0.05
+      note: 5X miles on flights booked through Capital One Travel
+    - category: general
+      ratePct: 0.02
+      note: 2X miles on all other purchases
+  bonuses:
+  - kind: welcome
+    points: 75000
+    cashCents: null
+    windowMonths: 3
+    minSpendCents: 400000
+    expirationText: Limited-time early spend bonus
+    footnotes:
+    - Earn 75,000 bonus miles once you spend $4,000 in purchases within the first
+      3 months of account opening.
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 19.99
+        max: 28.99
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 19.99
+        max: 28.99
+      introOffer:
+        introPct: 0.0
+        introMonths: 0
+        fee:
+          pct: 0.04
+          minCents: 0
+    cashAdvanceAPR:
+      pct: 28.99
+    penaltyAPR:
+      pct: 28.99
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0.04
+      minCents: 0
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 500
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
+  eligibility:
+    suggestedHistoryYears: 5
+    utilizationNote: Excellent credit required
+    otherNotes: []
+  benefits:
+  - Priority Pass and Capital One Lounge access
+  - $300 annual travel credit through Capital One Travel
+  - 10,000 anniversary bonus miles (approx. $100 toward travel)
+  - Global Entry or TSA PreCheck credit
+  cashbackTable:
+    rows:
+    - category: travel
+      ratePct: 0.1
+    - category: general
+      ratePct: 0.02
+  scraping:
+    source: issuer
+    sourceUrl: https://www.capitalone.com/credit-cards/venture-x/
+    termsUrl: null
+    lastVerifiedAt: '2025-11-08'
+    evidence: []
+- name: Capital One Savor
+  issuer: Capital One
+  network: MASTERCARD
+  isChargeCard: false
+  annualFeeCents: 0
+  feeCredits:
+    totalAnnualCreditsCents: 30000
+    items:
+    - name: Travel credit (first year)
+      amountCents: 10000
+      cadence: one-time
+      conditions: $100 credit for travel bookings through Capital One Travel in first
+        cardholder year
+    - name: Cash bonus
+      amountCents: 20000
+      cadence: one-time
+      conditions: $200 cash bonus after spending $500 in the first 3 months
+  minScoreBand: BAND_700_749
+  valuationCpp: 1.0
+  active: true
+  rewards:
+    baseRatePct: 0.01
+    earnRates:
+    - category: travel
+      ratePct: 0.05
+      note: 5% cash back on hotels, vacation rentals and rental cars booked through
+        Capital One Travel
+    - category: groceries
+      ratePct: 0.03
+      note: 3% cash back at grocery stores
+    - category: dining
+      ratePct: 0.03
+      note: 3% cash back on dining and entertainment
+    - category: streaming
+      ratePct: 0.03
+      note: 3% cash back on popular streaming services
+  bonuses:
+  - kind: welcome
+    points: null
+    cashCents: 20000
+    windowMonths: 3
+    minSpendCents: 50000
+    expirationText: Limited-time offer; includes separate travel credit
+    footnotes:
+    - Receive a $200 cash bonus after spending $500 within the first 3 months.
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 18.99
+        max: 28.99
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 18.99
+        max: 28.99
+      introOffer:
+        introPct: 0.0
+        introMonths: 12
+        fee:
+          pct: 0.03
+          minCents: 0
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0.03
+      minCents: 0
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
+  eligibility:
+    suggestedHistoryYears: 3
+    utilizationNote: Good credit recommended
+    otherNotes: []
+  benefits:
+  - Earn 3% cash back on dining, entertainment and streaming services
+  - Unlimited 3% cash back at grocery stores
+  - 5% cash back on hotels and rental cars booked through Capital One Travel
+  - $0 annual fee and no foreign transaction fees
+  cashbackTable:
+    rows:
+    - category: travel
+      ratePct: 0.05
+    - category: groceries
+      ratePct: 0.03
+    - category: dining
+      ratePct: 0.03
+    - category: streaming
+      ratePct: 0.03
+    - category: general
+      ratePct: 0.01
+  scraping:
+    source: issuer
+    sourceUrl: https://www.capitalone.com/credit-cards/savor/
+    termsUrl: null
+    lastVerifiedAt: '2025-11-08'
+    evidence: []
+- name: Capital One SavorOne
+  issuer: Capital One
+  network: MASTERCARD
+  isChargeCard: false
+  annualFeeCents: 3900
+  feeCredits:
+    totalAnnualCreditsCents: 0
+    items: []
+  minScoreBand: BAND_660_699
+  valuationCpp: 1.0
+  active: true
+  rewards:
+    baseRatePct: 0.01
+    earnRates:
+    - category: groceries
+      ratePct: 0.03
+      note: 3% cash back at grocery stores
+    - category: dining
+      ratePct: 0.03
+      note: 3% cash back on dining
+    - category: entertainment
+      ratePct: 0.03
+      note: 3% cash back on entertainment
+    - category: streaming
+      ratePct: 0.03
+      note: 3% cash back on streaming services
+  bonuses:
+  - kind: welcome
+    points: null
+    cashCents: null
+    windowMonths: 0
+    minSpendCents: 0
+    expirationText: No sign-up bonus noted
+    footnotes: []
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 29.49
+        max: 29.49
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 29.49
+        max: 29.49
+      introOffer:
+        introPct: 0.0
+        introMonths: 0
+        fee:
+          pct: 0.03
+          minCents: 0
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0.03
+      minCents: 0
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
+  eligibility:
+    suggestedHistoryYears: 2
+    utilizationNote: Good credit recommended
+    otherNotes: []
+  benefits:
+  - Unlimited 3% cash back at grocery stores, dining, entertainment and popular streaming
+    services
+  - $39 annual fee
+  - No foreign transaction fees
+  cashbackTable:
+    rows:
+    - category: groceries
+      ratePct: 0.03
+    - category: dining
+      ratePct: 0.03
+    - category: entertainment
+      ratePct: 0.03
+    - category: streaming
+      ratePct: 0.03
+    - category: general
+      ratePct: 0.01
+  scraping:
+    source: issuer
+    sourceUrl: https://www.capitalone.com/credit-cards/savorone/
+    termsUrl: null
+    lastVerifiedAt: '2025-11-08'
+    evidence: []
+- name: Citi Double Cash
+  issuer: Citi
+  network: MASTERCARD
+  isChargeCard: false
+  annualFeeCents: 0
+  feeCredits:
+    totalAnnualCreditsCents: 0
+    items: []
+  minScoreBand: BAND_660_699
+  valuationCpp: 1.0
+  active: true
+  rewards:
+    baseRatePct: 0.02
+    earnRates:
+    - category: travel
+      ratePct: 0.05
+      note: 5% total cash back on hotels, car rentals and attractions booked through
+        Citi Travel portal
+  bonuses:
+  - kind: welcome
+    points: null
+    cashCents: null
+    windowMonths: 0
+    minSpendCents: 0
+    expirationText: No sign-up bonus noted
+    footnotes: []
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 18.49
+        max: 28.49
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 18.49
+        max: 28.49
+      introOffer:
+        introPct: 0.0
+        introMonths: 0
+        fee:
+          pct: 0.03
+          minCents: 500
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0.03
+      minCents: 500
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
+  eligibility:
+    suggestedHistoryYears: 2
+    utilizationNote: Good credit recommended
+    otherNotes: []
+  benefits:
+  - 'Earn 2% total cash back on all purchases: 1% when you buy and 1% as you pay'
+  - 5% total cash back on hotels, car rentals and attractions booked through Citi
+    Travel portal
+  - No annual fee
+  cashbackTable:
+    rows:
+    - category: general
+      ratePct: 0.02
+    - category: travel
+      ratePct: 0.05
+  scraping:
+    source: issuer
+    sourceUrl: https://www.citi.com/credit-cards/citi-double-cash-credit-card
+    termsUrl: null
+    lastVerifiedAt: '2025-11-08'
+    evidence: []
+- name: Citi Premier (Strata Premier)
+  issuer: Citi
+  network: MASTERCARD
+  isChargeCard: false
+  annualFeeCents: 9500
+  feeCredits:
+    totalAnnualCreditsCents: 10000
+    items:
+    - name: Annual hotel credit
+      amountCents: 10000
+      cadence: annual
+      conditions: $100 off a single hotel stay of $500 or more booked through CitiTravel.com
+  minScoreBand: BAND_700_749
+  valuationCpp: 1.0
+  active: true
+  rewards:
+    baseRatePct: 0.01
+    earnRates:
+    - category: travel
+      ratePct: 0.1
+      note: 10X points on hotels, car rentals and attractions booked on CitiTravel.com
+    - category: travel
+      ratePct: 0.03
+      note: 3X points on air travel and other hotel purchases
+    - category: dining
+      ratePct: 0.03
+      note: 3X points on restaurants
+    - category: groceries
+      ratePct: 0.03
+      note: 3X points on supermarkets
+    - category: gas
+      ratePct: 0.03
+      note: 3X points on gas & EV charging stations
+    - category: general
+      ratePct: 0.01
+      note: 1X point on all other purchases
+  bonuses:
+  - kind: welcome
+    points: null
+    cashCents: null
+    windowMonths: 0
+    minSpendCents: 0
+    expirationText: Sign-up bonus not specified on issuer page
+    footnotes: []
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 21.24
+        max: 29.24
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 21.24
+        max: 29.24
+      introOffer:
+        introPct: 0.0
+        introMonths: 0
+        fee:
+          pct: 0.05
+          minCents: 500
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0.05
+      minCents: 500
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
+  eligibility:
+    suggestedHistoryYears: 3
+    utilizationNote: Good to excellent credit recommended
+    otherNotes: []
+  benefits:
+  - 3X points on air travel, hotels, restaurants, supermarkets, and gas & EV charging
+    stations
+  - 10X points on hotels, car rentals and attractions booked through CitiTravel.com
+  - $100 annual hotel credit
+  - No foreign transaction fees
+  cashbackTable:
+    rows:
+    - category: travel
+      ratePct: 0.1
+    - category: dining
+      ratePct: 0.03
+    - category: groceries
+      ratePct: 0.03
+    - category: gas
+      ratePct: 0.03
+    - category: general
+      ratePct: 0.01
+  scraping:
+    source: issuer
+    sourceUrl: https://www.citi.com/credit-cards/citi-strata-premier-credit-card
+    termsUrl: null
+    lastVerifiedAt: '2025-11-08'
+    evidence: []
+- name: Citi Custom Cash
+  issuer: Citi
+  network: MASTERCARD
+  isChargeCard: false
+  annualFeeCents: null
+  feeCredits:
+    totalAnnualCreditsCents: null
+    items: []
+  minScoreBand: null
+  valuationCpp: null
+  active: true
+  rewards:
+    baseRatePct: null
+    earnRates: []
+  bonuses: []
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr: {}
+  fees: {}
+  eligibility:
+    suggestedHistoryYears: null
+    utilizationNote: null
+    otherNotes: []
+  benefits: []
+  cashbackTable:
+    rows: []
+  scraping:
+    source: null
+    sourceUrl: null
+    termsUrl: null
+    lastVerifiedAt: null
+    evidence: []
+- name: Wells Fargo Autograph
+  issuer: Wells Fargo
+  network: VISA
+  isChargeCard: false
+  annualFeeCents: null
+  feeCredits:
+    totalAnnualCreditsCents: null
+    items: []
+  minScoreBand: null
+  valuationCpp: null
+  active: true
+  rewards:
+    baseRatePct: null
+    earnRates: []
+  bonuses: []
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr: {}
+  fees: {}
+  eligibility:
+    suggestedHistoryYears: null
+    utilizationNote: null
+    otherNotes: []
+  benefits: []
+  cashbackTable:
+    rows: []
+  scraping:
+    source: null
+    sourceUrl: null
+    termsUrl: null
+    lastVerifiedAt: null
+    evidence: []
+- name: Wells Fargo Active Cash
+  issuer: Wells Fargo
+  network: VISA
+  isChargeCard: false
+  annualFeeCents: null
+  feeCredits:
+    totalAnnualCreditsCents: null
+    items: []
+  minScoreBand: null
+  valuationCpp: null
+  active: true
+  rewards:
+    baseRatePct: null
+    earnRates: []
+  bonuses: []
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr: {}
+  fees: {}
+  eligibility:
+    suggestedHistoryYears: null
+    utilizationNote: null
+    otherNotes: []
+  benefits: []
+  cashbackTable:
+    rows: []
+  scraping:
+    source: null
+    sourceUrl: null
+    termsUrl: null
+    lastVerifiedAt: null
+    evidence: []
+- name: Bilt Mastercard
+  issuer: Wells Fargo
+  network: MASTERCARD
+  isChargeCard: false
+  annualFeeCents: null
+  feeCredits:
+    totalAnnualCreditsCents: null
+    items: []
+  minScoreBand: null
+  valuationCpp: null
+  active: true
+  rewards:
+    baseRatePct: null
+    earnRates: []
+  bonuses: []
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr: {}
+  fees: {}
+  eligibility:
+    suggestedHistoryYears: null
+    utilizationNote: null
+    otherNotes: []
+  benefits: []
+  cashbackTable:
+    rows: []
+  scraping:
+    source: null
+    sourceUrl: null
+    termsUrl: null
+    lastVerifiedAt: null
+    evidence: []
+- name: Bank of America Premium Rewards
+  issuer: Bank of America
+  network: VISA
+  isChargeCard: false
+  annualFeeCents: null
+  feeCredits:
+    totalAnnualCreditsCents: null
+    items: []
+  minScoreBand: null
+  valuationCpp: null
+  active: true
+  rewards:
+    baseRatePct: null
+    earnRates: []
+  bonuses: []
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr: {}
+  fees: {}
+  eligibility:
+    suggestedHistoryYears: null
+    utilizationNote: null
+    otherNotes: []
+  benefits: []
+  cashbackTable:
+    rows: []
+  scraping:
+    source: null
+    sourceUrl: null
+    termsUrl: null
+    lastVerifiedAt: null
+    evidence: []
+- name: Discover it Cash Back
+  issuer: Discover
+  network: DISCOVER
+  isChargeCard: false
+  annualFeeCents: null
+  feeCredits:
+    totalAnnualCreditsCents: null
+    items: []
+  minScoreBand: null
+  valuationCpp: null
+  active: true
+  rewards:
+    baseRatePct: null
+    earnRates: []
+  bonuses: []
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr: {}
+  fees: {}
+  eligibility:
+    suggestedHistoryYears: null
+    utilizationNote: null
+    otherNotes: []
+  benefits: []
+  cashbackTable:
+    rows: []
+  scraping:
+    source: null
+    sourceUrl: null
+    termsUrl: null
+    lastVerifiedAt: null
+    evidence: []
+- name: American Express Platinum
+  issuer: American Express
+  network: AMEX
+  isChargeCard: false
+  annualFeeCents: null
+  feeCredits:
+    totalAnnualCreditsCents: null
+    items: []
+  minScoreBand: null
+  valuationCpp: null
+  active: true
+  rewards:
+    baseRatePct: null
+    earnRates: []
+  bonuses: []
+  pacing:
+    minDaysBetweenNewCards: 90
+  apr: {}
+  fees: {}
+  eligibility:
+    suggestedHistoryYears: null
+    utilizationNote: null
+    otherNotes: []
+  benefits: []
+  cashbackTable:
+    rows: []
+  scraping:
+    source: null
+    sourceUrl: null
+    termsUrl: null
+    lastVerifiedAt: null
+    evidence: []
