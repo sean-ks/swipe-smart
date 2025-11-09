@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes';
+import recommendationsRoutes from './routes/recommendations.routes';
 
 // Load environment variables from backend .env file
 dotenv.config();
@@ -18,6 +19,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/recommendations', recommendationsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
