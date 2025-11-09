@@ -164,6 +164,7 @@ model CardsCatalog {
   issuer          String
   network         CardNetwork
   RewardType      RewardType?
+  ImageURL	  String?
   isChargeCard    Boolean     @default(false)
   annualFeeCents  Int         @default(0)
   feeCreditsCents Int         @default(0)
@@ -171,7 +172,6 @@ model CardsCatalog {
   valuationCpp    Decimal?    @db.Decimal(6, 3)
   active          Boolean     @default(true)
 
-  // NEW provenance / metadata
   currencyProgram String?
   sourceUrl       String?
   termsUrl        String?
