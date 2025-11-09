@@ -159,6 +159,7 @@ model CardsCatalog {
   network         CardNetwork
   RewardType      RewardType?
   isChargeCard    Boolean     @default(false)
+  isTestCard      Boolean     @default(false)
   annualFeeCents  Int         @default(0)
   feeCreditsCents Int         @default(0)
   minCreditScore  Int?        @default(0)
