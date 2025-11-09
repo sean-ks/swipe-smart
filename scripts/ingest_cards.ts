@@ -8,7 +8,7 @@ import { config } from "dotenv";
 config();
 
 const { DATABASE_URL } = process.env; // use pooled connection string with write role
-const YAML_DEFAULT_PATH = path.resolve(process.cwd(), "yaml-files/cards_finalv2.yaml");
+const YAML_DEFAULT_PATH = path.resolve(process.cwd(), "yaml-files/credit_cards.yaml");
 
 async function main() {
   const yamlPath = process.argv[2] ? path.resolve(process.argv[2]) : YAML_DEFAULT_PATH;
