@@ -106,9 +106,114 @@ export function calculateBonusValue(
 }
 
 /**
- * Calculate 2-year cashback value from earn rates
+ * Calculate 2-year cashback for cards with rotating categories
  */
-export function calculateTwoYearCashback(
+function calculateRotatingCashback(
+  card: CardWithDetails,
+  yearlySpendingByCategory: Partial<Record<Category, number>>,
+  rewardType: RewardType | null
+): number {
+  let twoYearCashback = 0;
+
+  // Build a map of which categories are in rotation and in how many quarters
+  const rotatingCategoryMap = new Map<string, number>();
+  const totalQuarters = card.rotating.length;
+
+  // Count how many quarters each category appears in
+  card.rotating.forEach(schedule => {
+    schedule.categories.forEach(category => {
+      const count = rotatingCategoryMap.get(category) || 0;
+      rotatingCategoryMap.set(category, count + 1);
+    });
+  });
+
+  // Find the rotating earn rate (usually the highest rate)
+  const rotatingRate = card.earnRates.find(r => r.isRotating);
+  const baseRate = card.earnRates.find(r => r.category === 'general');
+
+  if (!rotatingRate) {
+    // No rotating rate found, fall back to regular calculation
+    return calculateRegularCashback(card, yearlySpendingByCategory, rewardType);
+  }
+
+  const rotatingRatePct = typeof rotatingRate.ratePct === 'number'
+    ? rotatingRate.ratePct
+    : parseFloat(rotatingRate.ratePct.toString());
+
+  const baseRatePct = baseRate
+    ? (typeof baseRate.ratePct === 'number'
+        ? baseRate.ratePct
+        : parseFloat(baseRate.ratePct.toString()))
+    : 0.01;
+
+  // For each spending category
+  for (const [category, yearlySpending] of Object.entries(yearlySpendingByCategory)) {
+    if (!yearlySpending) continue;
+
+    const quartersActive = rotatingCategoryMap.get(category);
+
+    if (quartersActive) {
+      // This category is in rotation for some quarters
+      // Calculate average spending per quarter that gets bonus rate
+      const avgSpendingPerQuarter = yearlySpending / 4;
+      const bonusSpendingPerYear = avgSpendingPerQuarter * quartersActive;
+
+      // Apply cap if it exists (e.g., Discover it: $1,500/quarter)
+      let cappedBonusSpending = bonusSpendingPerYear;
+      if (rotatingRate.capAmountCents && rotatingRate.capWindowMonths) {
+        const windowsPerYear = 12 / rotatingRate.capWindowMonths;
+        const maxBonusSpendingPerYear = rotatingRate.capAmountCents * windowsPerYear;
+        cappedBonusSpending = Math.min(bonusSpendingPerYear, maxBonusSpendingPerYear);
+      }
+
+      // Calculate value based on card type
+      if (rewardType === 'TRAVEL') {
+        const cppValue = card.valuationCpp
+          ? (typeof card.valuationCpp === 'number'
+              ? card.valuationCpp
+              : parseFloat(card.valuationCpp.toString()))
+          : 0;
+        twoYearCashback += cappedBonusSpending * rotatingRatePct * 2 * cppValue;
+      } else {
+        twoYearCashback += cappedBonusSpending * rotatingRatePct * 2;
+      }
+
+      // Remaining spending earns base rate
+      const remainingSpending = yearlySpending - cappedBonusSpending;
+      if (remainingSpending > 0) {
+        if (rewardType === 'TRAVEL') {
+          const cppValue = card.valuationCpp
+            ? (typeof card.valuationCpp === 'number'
+                ? card.valuationCpp
+                : parseFloat(card.valuationCpp.toString()))
+            : 0;
+          twoYearCashback += remainingSpending * baseRatePct * 2 * cppValue;
+        } else {
+          twoYearCashback += remainingSpending * baseRatePct * 2;
+        }
+      }
+    } else {
+      // This category is not in rotation, earns base rate
+      if (rewardType === 'TRAVEL') {
+        const cppValue = card.valuationCpp
+          ? (typeof card.valuationCpp === 'number'
+              ? card.valuationCpp
+              : parseFloat(card.valuationCpp.toString()))
+          : 0;
+        twoYearCashback += yearlySpending * baseRatePct * 2 * cppValue;
+      } else {
+        twoYearCashback += yearlySpending * baseRatePct * 2;
+      }
+    }
+  }
+
+  return twoYearCashback;
+}
+
+/**
+ * Calculate 2-year cashback for regular (non-rotating) cards
+ */
+function calculateRegularCashback(
   card: CardWithDetails,
   yearlySpendingByCategory: Partial<Record<Category, number>>,
   rewardType: RewardType | null
@@ -129,25 +234,62 @@ export function calculateTwoYearCashback(
         : parseFloat(earnRate.ratePct.toString());
 
       // Calculate value for this category over 2 years
-      // For CASHBACK cards: ratePct is percentage (e.g., 3.0 = 3%)
+      // For CASHBACK cards: ratePct is decimal (e.g., 0.03 = 3%)
       // For TRAVEL cards: ratePct is points per dollar (e.g., 2.0 = 2x points)
       let categoryValue: number;
 
-      if (rewardType === 'TRAVEL') {
-        // Travel cards: ratePct = points per dollar, multiply by spending to get points
-        // Then convert points to cash value using cpp
-        const cppValue = card.valuationCpp
-          ? (typeof card.valuationCpp === 'number'
-              ? card.valuationCpp
-              : parseFloat(card.valuationCpp.toString()))
-          : 0;
+      // Check if this earn rate has a spending cap
+      if (earnRate.capAmountCents && earnRate.capWindowMonths) {
+        // Calculate max bonus spending per year based on cap window
+        // Example: $6,000 cap per 12 months = $6,000/year max bonus spending
+        // Example: $500 cap per 1 month = $500 * 12 = $6,000/year max bonus spending
+        const windowsPerYear = 12 / earnRate.capWindowMonths;
+        const maxBonusSpendingPerYear = earnRate.capAmountCents * windowsPerYear;
 
-        // Points earned = spending * points_per_dollar * 2 years
-        // Cash value = points * cents_per_point
-        categoryValue = yearlySpending * ratePctValue * 2 * cppValue;
+        // Split spending into capped (bonus rate) and excess (base rate)
+        const cappedYearlySpending = Math.min(yearlySpending, maxBonusSpendingPerYear);
+        const excessYearlySpending = Math.max(0, yearlySpending - maxBonusSpendingPerYear);
+
+        if (rewardType === 'TRAVEL') {
+          // Travel cards: apply cpp conversion
+          const cppValue = card.valuationCpp
+            ? (typeof card.valuationCpp === 'number'
+                ? card.valuationCpp
+                : parseFloat(card.valuationCpp.toString()))
+            : 0;
+
+          // Capped spending earns bonus rate
+          categoryValue = cappedYearlySpending * ratePctValue * 2 * cppValue;
+
+          // Excess spending earns base rate (typically 1x points)
+          // Assume base rate is 1x for excess spending
+          categoryValue += excessYearlySpending * 1.0 * 2 * cppValue;
+        } else {
+          // Cashback cards: capped spending earns bonus rate
+          categoryValue = cappedYearlySpending * ratePctValue * 2;
+
+          // Excess spending earns base rate (typically 1%)
+          // Assume base rate is 0.01 (1%) for excess spending
+          categoryValue += excessYearlySpending * 0.01 * 2;
+        }
       } else {
-        // Cashback cards: ratePct is percentage, divide by 100
-        categoryValue = yearlySpending * (ratePctValue / 100) * 2;
+        // No cap - original logic
+        if (rewardType === 'TRAVEL') {
+          // Travel cards: ratePct = points per dollar, multiply by spending to get points
+          // Then convert points to cash value using cpp
+          const cppValue = card.valuationCpp
+            ? (typeof card.valuationCpp === 'number'
+                ? card.valuationCpp
+                : parseFloat(card.valuationCpp.toString()))
+            : 0;
+
+          // Points earned = spending * points_per_dollar * 2 years
+          // Cash value = points * cents_per_point
+          categoryValue = yearlySpending * ratePctValue * 2 * cppValue;
+        } else {
+          // Cashback cards: ratePct is already a decimal (e.g., 0.03 = 3%)
+          categoryValue = yearlySpending * ratePctValue * 2;
+        }
       }
 
       twoYearCashback += categoryValue;
@@ -156,6 +298,24 @@ export function calculateTwoYearCashback(
   }
 
   return twoYearCashback;
+}
+
+/**
+ * Calculate 2-year cashback value from earn rates
+ * Routes to rotating or regular calculation based on card type
+ */
+export function calculateTwoYearCashback(
+  card: CardWithDetails,
+  yearlySpendingByCategory: Partial<Record<Category, number>>,
+  rewardType: RewardType | null
+): number {
+  // Check if card has rotating categories
+  if (card.rotating && card.rotating.length > 0) {
+    return calculateRotatingCashback(card, yearlySpendingByCategory, rewardType);
+  }
+
+  // Otherwise use regular calculation
+  return calculateRegularCashback(card, yearlySpendingByCategory, rewardType);
 }
 
 /**

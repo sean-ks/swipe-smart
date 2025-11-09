@@ -79,6 +79,9 @@ export interface CardWithDetails {
   earnRates: Array<{
     category: Category;
     ratePct: any; // Prisma Decimal type
+    capAmountCents: number | null;
+    capWindowMonths: number | null;
+    isRotating: boolean;
   }>;
   bonuses: Array<{
     kind: string;
@@ -90,4 +93,8 @@ export interface CardWithDetails {
   eligibility: {
     suggestedHistoryYears: number | null;
   } | null;
+  rotating: Array<{
+    quarter: number | null;
+    categories: string[];
+  }>;
 }

@@ -60,6 +60,9 @@ export async function getTopCardRecommendations(
         select: {
           category: true,
           ratePct: true,
+          capAmountCents: true,
+          capWindowMonths: true,
+          isRotating: true,
         },
       },
       bonuses: {
@@ -77,6 +80,12 @@ export async function getTopCardRecommendations(
       eligibility: {
         select: {
           suggestedHistoryYears: true,
+        },
+      },
+      rotating: {
+        select: {
+          quarter: true,
+          categories: true,
         },
       },
     },
