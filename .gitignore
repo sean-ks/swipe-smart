@@ -6,3 +6,13 @@ node_modules
 
 # Vite
 .vite
+
+# cc
+.serena/
+.claude/
+CLAUDE.md
+CUSTOM_SUBAGENT_PROMPT.md
+AUTONOMOUS-DEBUGGING-PROTOCOL.md
+TPM-PROTOCOL.md
+CHANGELOG.md
+swipe-smart-design-mockup/
