@@ -23,16 +23,22 @@ export default function SignIn({ onNavigate }: SignInProps) {
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      // Sign in with Supabase
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-    } else {
+      if (error) throw error;
+
+      // Navigation will be handled by AuthContext
       onNavigate('dashboard');
+    } catch (error) {
+      console.error('Signin error:', error);
+      setError(error instanceof Error ? error.message : 'Invalid email or password');
+    } finally {
+      setLoading(false);
     }
   };
 

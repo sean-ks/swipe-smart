@@ -6,15 +6,22 @@ import SignUpFlow from './components/SignUpFlow';
 import Dashboard from './components/Dashboard';
 import CreditRoute from './components/CreditRoute';
 import Explore from './components/Explore';
+import AuthCallback from './components/AuthCallback';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
-type Screen = 'loading' | 'signin' | 'signup' | 'signup-flow' | 'dashboard' | 'credit-route' | 'explore';
+type Screen = 'loading' | 'signin' | 'signup' | 'signup-flow' | 'dashboard' | 'credit-route' | 'explore' | 'auth-callback';
 
 function AppContent() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('loading');
   const { user, loading: authLoading, isNewUser } = useAuth();
 
   useEffect(() => {
+    // Check for auth callback first
+    if (window.location.pathname === '/auth-callback') {
+      setCurrentScreen('auth-callback');
+      return;
+    }
+
     // Wait for auth to load, then check if user is authenticated
     if (!authLoading) {
       if (user) {
@@ -51,6 +58,8 @@ function AppContent() {
         return <CreditRoute onNavigate={setCurrentScreen} />;
       case 'explore':
         return <Explore onNavigate={setCurrentScreen} />;
+      case 'auth-callback':
+        return <AuthCallback onNavigate={setCurrentScreen} />;
       default:
         return <SignIn onNavigate={setCurrentScreen} />;
     }
