@@ -1,0 +1,608 @@
+{
+  "version": 1,
+  "seed": 23456,
+  "override_accounts": [
+    {
+      "type": "credit",
+      "subtype": "credit card",
+      "starting_balance": 0,
+      "force_available_balance": null,
+      "currency": "USD",
+      "meta": {
+        "name": "Discover It Student",
+        "official_name": "Discover It Student Cash Back Card",
+        "limit": 2000
+      },
+      "numbers": {
+        "account": "6011000999999000",
+        "ach_routing": null,
+        "ach_wire_routing": null,
+        "eft_institution": null,
+        "eft_branch": null,
+        "international_bic": null,
+        "international_iban": null,
+        "bacs_sort_code": null
+      },
+      "transactions": [
+        {
+          "date_transacted": "2025-08-03",
+          "date_posted": "2025-08-03",
+          "amount": -101.92,
+          "description": "TRAVEL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-08-04",
+          "date_posted": "2025-08-04",
+          "amount": -125.65,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-08-04",
+          "date_posted": "2025-08-04",
+          "amount": -68.16,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-08-05",
+          "date_posted": "2025-08-05",
+          "amount": -48.48,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-08-11",
+          "date_posted": "2025-08-11",
+          "amount": -42.59,
+          "description": "GROCERIES",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-08-14",
+          "date_posted": "2025-08-14",
+          "amount": -5.03,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-08-16",
+          "date_posted": "2025-08-16",
+          "amount": -68.42,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-08-19",
+          "date_posted": "2025-08-19",
+          "amount": -37.41,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-08-20",
+          "date_posted": "2025-08-20",
+          "amount": -40.12,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-08-21",
+          "date_posted": "2025-08-21",
+          "amount": -61.59,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-08-21",
+          "date_posted": "2025-08-21",
+          "amount": -31.7,
+          "description": "GAS",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-08-22",
+          "date_posted": "2025-08-22",
+          "amount": -53.41,
+          "description": "GAS",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-08-24",
+          "date_posted": "2025-08-24",
+          "amount": -55.46,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-08-27",
+          "date_posted": "2025-08-27",
+          "amount": -45.95,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-08-28",
+          "date_posted": "2025-08-28",
+          "amount": 226.01,
+          "description": "PAYMENT RECEIVED",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-01",
+          "date_posted": "2025-09-02",
+          "amount": -88.86,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-04",
+          "date_posted": "2025-09-04",
+          "amount": -143.97,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-04",
+          "date_posted": "2025-09-04",
+          "amount": -80.82,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-05",
+          "date_posted": "2025-09-05",
+          "amount": -65.71,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-05",
+          "date_posted": "2025-09-06",
+          "amount": -58.51,
+          "description": "GROCERIES",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-06",
+          "date_posted": "2025-09-06",
+          "amount": -35.42,
+          "description": "GROCERIES",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-07",
+          "date_posted": "2025-09-08",
+          "amount": -47.26,
+          "description": "TRAVEL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-10",
+          "date_posted": "2025-09-11",
+          "amount": -5.09,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-10",
+          "date_posted": "2025-09-11",
+          "amount": -37.15,
+          "description": "GAS",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-12",
+          "date_posted": "2025-09-12",
+          "amount": -78.46,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-15",
+          "date_posted": "2025-09-15",
+          "amount": -68.76,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-15",
+          "date_posted": "2025-09-15",
+          "amount": -32.37,
+          "description": "GAS",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-16",
+          "date_posted": "2025-09-16",
+          "amount": -44.92,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-16",
+          "date_posted": "2025-09-16",
+          "amount": -130.78,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-19",
+          "date_posted": "2025-09-19",
+          "amount": -100.16,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-19",
+          "date_posted": "2025-09-20",
+          "amount": -138.72,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-21",
+          "date_posted": "2025-09-21",
+          "amount": -131.38,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-21",
+          "date_posted": "2025-09-21",
+          "amount": -41.29,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-24",
+          "date_posted": "2025-09-25",
+          "amount": -21.03,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-25",
+          "date_posted": "2025-09-25",
+          "amount": -12.03,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-27",
+          "date_posted": "2025-09-28",
+          "amount": -49.48,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-28",
+          "date_posted": "2025-09-28",
+          "amount": -25.65,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-28",
+          "date_posted": "2025-09-28",
+          "amount": -95.83,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-29",
+          "date_posted": "2025-09-29",
+          "amount": -122.63,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-09-30",
+          "date_posted": "2025-10-01",
+          "amount": -7.01,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-01",
+          "date_posted": "2025-10-01",
+          "amount": -27.22,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-01",
+          "date_posted": "2025-10-02",
+          "amount": -115.95,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-02",
+          "date_posted": "2025-10-02",
+          "amount": -34.44,
+          "description": "GAS",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-02",
+          "date_posted": "2025-10-03",
+          "amount": -83.25,
+          "description": "TRAVEL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-05",
+          "date_posted": "2025-10-05",
+          "amount": -8.38,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-05",
+          "date_posted": "2025-10-06",
+          "amount": -34.36,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-09",
+          "date_posted": "2025-10-10",
+          "amount": 174.48,
+          "description": "PAYMENT RECEIVED",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-12",
+          "date_posted": "2025-10-12",
+          "amount": -130.57,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-12",
+          "date_posted": "2025-10-12",
+          "amount": -29.26,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-12",
+          "date_posted": "2025-10-12",
+          "amount": -30.59,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-12",
+          "date_posted": "2025-10-12",
+          "amount": -40.05,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-18",
+          "date_posted": "2025-10-18",
+          "amount": -85.6,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-18",
+          "date_posted": "2025-10-19",
+          "amount": -73.95,
+          "description": "GROCERIES",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-20",
+          "date_posted": "2025-10-20",
+          "amount": -73.93,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-20",
+          "date_posted": "2025-10-21",
+          "amount": -50.84,
+          "description": "GAS",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-20",
+          "date_posted": "2025-10-21",
+          "amount": -109.87,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-23",
+          "date_posted": "2025-10-23",
+          "amount": -18.09,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-24",
+          "date_posted": "2025-10-25",
+          "amount": -14.29,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-24",
+          "date_posted": "2025-10-25",
+          "amount": -26.46,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-26",
+          "date_posted": "2025-10-26",
+          "amount": -29.53,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-26",
+          "date_posted": "2025-10-27",
+          "amount": -24.29,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-27",
+          "date_posted": "2025-10-28",
+          "amount": -116.27,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-30",
+          "date_posted": "2025-10-31",
+          "amount": -123.87,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-30",
+          "date_posted": "2025-10-31",
+          "amount": -34.95,
+          "description": "GROCERIES",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-31",
+          "date_posted": "2025-10-31",
+          "amount": -68.22,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-10-31",
+          "date_posted": "2025-11-01",
+          "amount": -11.16,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-11-01",
+          "date_posted": "2025-11-01",
+          "amount": -34.07,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-11-03",
+          "date_posted": "2025-11-03",
+          "amount": -49.73,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-11-03",
+          "date_posted": "2025-11-03",
+          "amount": -131.74,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-11-03",
+          "date_posted": "2025-11-04",
+          "amount": -165.55,
+          "description": "TRAVEL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-11-08",
+          "date_posted": "2025-11-09",
+          "amount": -107.12,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-11-09",
+          "date_posted": "2025-11-09",
+          "amount": -7.73,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-11-10",
+          "date_posted": "2025-11-10",
+          "amount": -19.29,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-11-10",
+          "date_posted": "2025-11-11",
+          "amount": -146.44,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-11-11",
+          "date_posted": "2025-11-11",
+          "amount": -78.89,
+          "description": "GROCERIES",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-11-13",
+          "date_posted": "2025-11-13",
+          "amount": -24.54,
+          "description": "DINING",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-11-13",
+          "date_posted": "2025-11-14",
+          "amount": -136.13,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-11-13",
+          "date_posted": "2025-11-14",
+          "amount": -32.33,
+          "description": "GENERAL",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-11-14",
+          "date_posted": "2025-11-14",
+          "amount": -38.11,
+          "description": "GAS",
+          "currency": "USD"
+        },
+        {
+          "date_transacted": "2025-11-15",
+          "date_posted": "2025-11-15",
+          "amount": -20.14,
+          "description": "DINING",
+          "currency": "USD"
+        }
+      ],
+      "identity": {
+        "names": [
+          "Arnab Bhowmik"
+        ],
+        
+        "addresses": [
+                    {
+                        "primary": true,
+                        "data": {
+                            "country": "US",
+                            "city": "New York",
+                            "street": "111 8th Ave",
+                            "postal_code": "10011",
+                            "region": "NY"
+                        }
+                    }
+                ]
+      }
+    }
+  ]
+}
