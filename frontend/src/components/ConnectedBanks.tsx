@@ -1,11 +1,13 @@
+import { useState } from 'react';
 import { CreditCard } from 'lucide-react';
-import { PlaidLinkButton } from './plaid/PlaidLinkButton';
 import { PlaidItemsList } from './plaid/PlaidItemsList';
 import { usePlaidItems } from '../hooks/usePlaidItems';
 import { api } from '../lib/api';
+import { Button } from './ui/button';
 
 export function ConnectedBanks() {
   const { items, loading, error, refresh } = usePlaidItems();
+  const [sandboxLoading, setSandboxLoading] = useState(false);
 
   const handleRemove = async (itemId: string) => {
     await api.plaid.removeItem(itemId);
@@ -28,11 +30,23 @@ export function ConnectedBanks() {
           </div>
         </div>
 
-        <PlaidLinkButton
-          buttonText="Add bank account"
-          onSuccess={refresh}
-          className="bg-white text-[#4962bf] hover:bg-white/90 w-full"
-        />
+        <Button
+          className="w-full bg-white text-[#4962bf] hover:bg-white/90"
+          disabled={sandboxLoading}
+          onClick={async () => {
+            try {
+              setSandboxLoading(true);
+              await api.plaid.createSandboxItem();
+              await refresh();
+            } catch (sandboxError) {
+              console.error(sandboxError);
+            } finally {
+              setSandboxLoading(false);
+            }
+          }}
+        >
+          {sandboxLoading ? 'Connecting sample bank...' : 'Connect sample sandbox bank'}
+        </Button>
       </div>
 
       <PlaidItemsList

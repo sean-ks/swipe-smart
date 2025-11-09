@@ -5,10 +5,9 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import { ArrowLeft, ArrowRight, CreditCard, Loader2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CreditCard } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { api } from '../lib/api';
-import { PlaidLinkButton } from './plaid/PlaidLinkButton';
 import { PlaidItemsList } from './plaid/PlaidItemsList';
 import { usePlaidItems } from '../hooks/usePlaidItems';
 import { useAuth } from '../contexts/AuthContext';
@@ -22,7 +21,13 @@ export default function SignUpFlow({ onNavigate }: SignUpFlowProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
-  const { items: plaidItems, loading: plaidLoading, error: plaidError, refresh: refreshPlaidItems } = usePlaidItems();
+  const {
+    items: plaidItems,
+    loading: plaidLoading,
+    error: plaidError,
+    refresh: refreshPlaidItems,
+  } = usePlaidItems({ enabled: currentStep === 3 });
+  const [sandboxLoading, setSandboxLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -325,19 +330,36 @@ export default function SignUpFlow({ onNavigate }: SignUpFlowProps) {
                     <CreditCard className="w-8 h-8 text-white flex-shrink-0" />
                     <div className="text-white">
                       <p className="mb-4">
-                        We'll use your bank statements to determine spending habits, priorities, and current cards to recommend the best credit cards for you.
+                        To keep testing in the Plaid sandbox, tap the button below and we&#39;ll load a sample bank connection for you automatically.
                       </p>
                       <p className="text-sm text-white/70">
-                        Your data is encrypted and secure. We use Plaid for bank connectivity.
+                        Sandbox data is fake but follows the same structure as live Plaid accounts, so downstream logic works unchanged.
                       </p>
                     </div>
                   </div>
 
-                  <PlaidLinkButton
-                    buttonText="Connect Bank Account with Plaid"
-                    onSuccess={refreshPlaidItems}
+                  <Button
+                    onClick={async () => {
+                      try {
+                        setSandboxLoading(true);
+                        setError(null);
+                        await api.plaid.createSandboxItem();
+                        await refreshPlaidItems();
+                      } catch (sandboxError) {
+                        setError(
+                          sandboxError instanceof Error
+                            ? sandboxError.message
+                            : 'Failed to connect sandbox bank. Please try again.'
+                        );
+                      } finally {
+                        setSandboxLoading(false);
+                      }
+                    }}
+                    disabled={sandboxLoading}
                     className="w-full bg-white text-[#4962bf] hover:bg-white/90"
-                  />
+                  >
+                    {sandboxLoading ? 'Connecting sample bank...' : 'Connect sample sandbox bank'}
+                  </Button>
                 </div>
 
                 <div className="bg-white/5 border-2 border-white/20 rounded-xl p-4">

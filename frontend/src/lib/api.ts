@@ -168,5 +168,12 @@ export const api = {
         body: JSON.stringify({ plaidItemId }),
       });
     },
+
+    async createSandboxItem(institutionId?: string) {
+      return authorizedFetch('/plaid/sandbox/connect-test-item', {
+        method: 'POST',
+        body: JSON.stringify({ institutionId }),
+      });
+    },
   },
 };

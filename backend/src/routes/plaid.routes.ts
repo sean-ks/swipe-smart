@@ -74,6 +74,102 @@ const decryptAccessToken = (payload: string) => {
   return decrypted.toString('utf8');
 };
 
+async function persistPlaidItem(
+  userId: string,
+  accessToken: string,
+  itemId: string
+) {
+  const itemResponse = await plaidClient.itemGet({
+    access_token: accessToken,
+  });
+  const institutionId = itemResponse.data.item.institution_id || '';
+  let institutionName: string | null = null;
+  if (institutionId) {
+    const institutionResponse = await plaidClient.institutionsGetById({
+      institution_id: institutionId,
+      country_codes: [CountryCode.Us],
+    });
+    institutionName = institutionResponse.data.institution.name;
+  }
+
+  let plaidItem = await prisma.plaidItem.findUnique({ where: { itemId } });
+
+  if (plaidItem) {
+    if (plaidItem.userId !== userId) {
+      throw new Error('Plaid item does not belong to the user');
+    }
+    plaidItem = await prisma.plaidItem.update({
+      where: { id: plaidItem.id },
+      data: {
+        accessToken: encryptAccessToken(accessToken),
+        institutionId,
+        institutionName,
+        status: 'ACTIVE',
+        errorCode: null,
+        lastSuccessfulUpdate: new Date(),
+      },
+    });
+  } else {
+    plaidItem = await prisma.plaidItem.create({
+      data: {
+        userId,
+        accessToken: encryptAccessToken(accessToken),
+        itemId,
+        institutionId,
+        institutionName,
+        status: 'ACTIVE',
+        errorCode: null,
+        lastSuccessfulUpdate: new Date(),
+      },
+    });
+  }
+
+  const accountsResponse = await plaidClient.accountsGet({
+    access_token: accessToken,
+  });
+
+  await Promise.all(
+    accountsResponse.data.accounts.map((account) =>
+      prisma.plaidAccount.upsert({
+        where: { accountId: account.account_id },
+        update: {
+          plaidItemId: plaidItem!.id,
+          name: account.name,
+          officialName: account.official_name || null,
+          type: account.type,
+          subtype: account.subtype || null,
+          mask: account.mask || null,
+          currentBalance: account.balances.current
+            ? Math.round(account.balances.current * 100)
+            : null,
+          availableBalance: account.balances.available
+            ? Math.round(account.balances.available * 100)
+            : null,
+          isoCurrencyCode: account.balances.iso_currency_code || 'USD',
+        },
+        create: {
+          plaidItemId: plaidItem!.id,
+          accountId: account.account_id,
+          name: account.name,
+          officialName: account.official_name || null,
+          type: account.type,
+          subtype: account.subtype || null,
+          mask: account.mask || null,
+          currentBalance: account.balances.current
+            ? Math.round(account.balances.current * 100)
+            : null,
+          availableBalance: account.balances.available
+            ? Math.round(account.balances.available * 100)
+            : null,
+          isoCurrencyCode: account.balances.iso_currency_code || 'USD',
+        },
+      })
+    )
+  );
+
+  return plaidItem;
+}
+
 router.post(
   '/link-token',
   verifyToken,
@@ -87,9 +183,6 @@ router.post(
         client_name: 'SwipeSmart',
         language: 'en',
         country_codes: [CountryCode.Us],
-      ...(process.env.PLAID_REDIRECT_URI
-        ? { redirect_uri: process.env.PLAID_REDIRECT_URI }
-        : {}),
       };
 
       if (plaidItemId) {
@@ -109,6 +202,25 @@ router.post(
         configs.access_token = decryptAccessToken(plaidItem.accessToken);
       } else {
         configs.products = [Products.Transactions];
+      }
+
+      const env = (process.env.PLAID_ENV || 'sandbox').toLowerCase();
+      if (env === 'sandbox') {
+        const response = await plaidClient.sandboxPublicTokenCreate({
+          institution_id: 'ins_109511',
+          initial_products: [Products.Transactions],
+        });
+        const exchange = await plaidClient.itemPublicTokenExchange({
+          public_token: response.data.public_token,
+        });
+        await persistPlaidItem(userId, exchange.data.access_token, exchange.data.item_id);
+        res.json({
+          linkToken: null,
+          expiration: null,
+          mode: plaidItemId ? 'update' : 'new',
+          sandbox: true,
+        });
+        return;
       }
 
       const tokenResponse = await plaidClient.linkTokenCreate(configs);
@@ -147,109 +259,17 @@ router.post(
 
       const accessToken = exchangeResponse.data.access_token;
       const itemId = exchangeResponse.data.item_id;
-      const encryptedAccessToken = encryptAccessToken(accessToken);
-
-      const itemResponse = await plaidClient.itemGet({
-        access_token: accessToken,
-      });
-      const institutionId = itemResponse.data.item.institution_id || '';
-
-      let institutionName: string | null = null;
-      if (institutionId) {
-        const institution = await plaidClient.institutionsGetById({
-          institution_id: institutionId,
-          country_codes: [CountryCode.Us],
-        });
-        institutionName = institution.data.institution.name;
-      }
-
-      let plaidItem = await prisma.plaidItem.findUnique({ where: { itemId } });
-
-      if (plaidItem) {
-        if (plaidItem.userId !== userId) {
-          res.status(403).json({ error: 'Plaid item does not belong to this user' });
-          return;
-        }
-        plaidItem = await prisma.plaidItem.update({
-          where: { id: plaidItem.id },
-          data: {
-            accessToken: encryptedAccessToken,
-            institutionId,
-            institutionName,
-            status: 'ACTIVE',
-            errorCode: null,
-            lastSuccessfulUpdate: new Date(),
-          },
-        });
-      } else {
-        plaidItem = await prisma.plaidItem.create({
-          data: {
-            userId,
-            accessToken: encryptedAccessToken,
-            itemId,
-            institutionId,
-            institutionName,
-            status: 'ACTIVE',
-            errorCode: null,
-            lastSuccessfulUpdate: new Date(),
-          },
-        });
-      }
-
-      const accountsResponse = await plaidClient.accountsGet({
-        access_token: accessToken,
-      });
-
-      await Promise.all(
-        accountsResponse.data.accounts.map((account) =>
-          prisma.plaidAccount.upsert({
-            where: { accountId: account.account_id },
-            update: {
-              plaidItemId: plaidItem!.id,
-              name: account.name,
-              officialName: account.official_name || null,
-              type: account.type,
-              subtype: account.subtype || null,
-              mask: account.mask || null,
-              currentBalance: account.balances.current
-                ? Math.round(account.balances.current * 100)
-                : null,
-              availableBalance: account.balances.available
-                ? Math.round(account.balances.available * 100)
-                : null,
-              isoCurrencyCode: account.balances.iso_currency_code || 'USD',
-            },
-            create: {
-              plaidItemId: plaidItem!.id,
-              accountId: account.account_id,
-              name: account.name,
-              officialName: account.official_name || null,
-              type: account.type,
-              subtype: account.subtype || null,
-              mask: account.mask || null,
-              currentBalance: account.balances.current
-                ? Math.round(account.balances.current * 100)
-                : null,
-              availableBalance: account.balances.available
-                ? Math.round(account.balances.available * 100)
-                : null,
-              isoCurrencyCode: account.balances.iso_currency_code || 'USD',
-            },
-          })
-        )
-      );
+      const plaidItem = await persistPlaidItem(userId, accessToken, itemId);
 
       res.json({
-        itemId,
-        plaidItemId: plaidItem.id,
+        success: true,
+        item_id: itemId,
+        plaid_item_id: plaidItem.id,
       });
     } catch (error: any) {
-      console.error(
-        'Error exchanging Plaid public token',
-        error.response?.data || error
-      );
+      console.error('Error exchanging public token', error.response?.data || error);
       res.status(500).json({
-        error: 'Failed to exchange Plaid public token',
+        error: 'Failed to exchange public token',
         details: error.response?.data || error.message,
       });
     }
@@ -313,7 +333,7 @@ router.delete('/items/:itemId', verifyToken, async (req: AuthRequest, res) => {
         access_token: decryptAccessToken(plaidItem.accessToken),
       });
     } catch (plaidError) {
-      console.warn('Failed to remove Plaid item via API', plaidError);
+      console.warn('Error removing item from Plaid', plaidError);
     }
 
     res.json({ success: true });
@@ -499,5 +519,51 @@ router.post('/accounts', verifyToken, async (req: AuthRequest, res) => {
     });
   }
 });
+
+router.post(
+  '/sandbox/connect-test-item',
+  verifyToken,
+  async (req: AuthRequest, res) => {
+    try {
+      const env = (process.env.PLAID_ENV || 'sandbox').toLowerCase();
+      if (env !== 'sandbox') {
+        return res
+          .status(400)
+          .json({ error: 'Sandbox shortcut only available in sandbox environment.' });
+      }
+
+      const { institutionId } = req.body as { institutionId?: string };
+      const response = await plaidClient.sandboxPublicTokenCreate({
+        institution_id: institutionId || 'ins_109511',
+        initial_products: [Products.Transactions],
+      });
+
+      const exchange = await plaidClient.itemPublicTokenExchange({
+        public_token: response.data.public_token,
+      });
+
+      const plaidItem = await persistPlaidItem(
+        req.userId!,
+        exchange.data.access_token,
+        exchange.data.item_id
+      );
+
+      res.json({
+        success: true,
+        plaid_item_id: plaidItem.id,
+        institutionName: plaidItem.institutionName,
+      });
+    } catch (error: any) {
+      console.error(
+        'Error creating sandbox Plaid item',
+        error.response?.data || error
+      );
+      res.status(500).json({
+        error: 'Failed to create sandbox Plaid item',
+        details: error.response?.data || error.message,
+      });
+    }
+  }
+);
 
 export default router;
