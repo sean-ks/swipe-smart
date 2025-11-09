@@ -82,6 +82,12 @@ export default function SignUpFlow({ onNavigate }: SignUpFlowProps) {
           onlineShoppingGoal: formData.onlineShoppingGoal || null,
         };
 
+        // DEBUG: Log what we're sending to the backend
+        console.log('==================== FRONTEND EMAIL SIGNUP DEBUG ====================');
+        console.log('Form Data State:', JSON.stringify(formData, null, 2));
+        console.log('Profile Data Being Sent:', JSON.stringify(profileData, null, 2));
+        console.log('=====================================================================');
+
         await api.auth.createProfile(profileData);
 
         // Navigate to dashboard

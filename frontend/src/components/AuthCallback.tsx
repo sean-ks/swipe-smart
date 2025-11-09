@@ -18,6 +18,16 @@ const AuthCallback = ({ onNavigate }: AuthCallbackProps) => {
         if (storedData) {
           const formData = JSON.parse(storedData);
 
+          // DEBUG: Log OAuth flow data
+          console.log('==================== FRONTEND OAUTH CALLBACK DEBUG ====================');
+          console.log('Retrieved from sessionStorage:', JSON.stringify(formData, null, 2));
+          console.log('Profile Data Being Sent:', JSON.stringify({
+            id: session.user.id,
+            email: session.user.email,
+            ...formData
+          }, null, 2));
+          console.log('=======================================================================');
+
           // Create profile with stored data
           await api.auth.createProfile({
             id: session.user.id,

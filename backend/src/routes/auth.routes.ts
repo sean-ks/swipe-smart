@@ -23,6 +23,11 @@ router.post('/create-profile', async (req, res) => {
       onlineShoppingGoal
     } = req.body;
 
+    // DEBUG: Log full request body to diagnose NULL values issue
+    console.log('==================== CREATE PROFILE DEBUG ====================');
+    console.log('FULL REQUEST BODY:', JSON.stringify(req.body, null, 2));
+    console.log('==============================================================');
+
     console.log('Create profile request received:', { id, email });
 
     // Validation
