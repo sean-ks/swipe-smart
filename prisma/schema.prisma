@@ -23,9 +23,10 @@ enum ScoreBand {
   BAND_750_PLUS
 }
 
-enum PreferenceType {
+enum RewardType {
   CASHBACK
   TRAVEL
+  MISCELLANEOUS 
 }
 
 enum Category {
@@ -121,7 +122,7 @@ model UserPrefs {
   creditHistoryYears Int            @default(0)
   maxActiveCards     Int            @default(2)
   annualFeeCapCents  Int            @default(0)
-  preference         PreferenceType @default(CASHBACK)
+  preference         RewardType @default(CASHBACK)
   allowAnnualFees    Boolean        @default(true)
 
   user Profile @relation(fields: [userId], references: [userId], onDelete: Cascade)
@@ -162,6 +163,7 @@ model CardsCatalog {
   name            String
   issuer          String
   network         CardNetwork
+  RewardType      RewardType?
   isChargeCard    Boolean     @default(false)
   annualFeeCents  Int         @default(0)
   feeCreditsCents Int         @default(0)
