@@ -82,6 +82,13 @@ enum ForeignTxnType {
   NONE
   PERCENT
 }
+
+enum PlaidItemStatus {
+  ACTIVE
+  LOGIN_REQUIRED
+  ERROR
+  DISCONNECTED
+}
 //// Core user ///////////////////////////////////////////////////////////
 
 model Profile {
@@ -112,6 +119,7 @@ model Profile {
   recRuns                RecommendationRun[]
   bonusProgress          BonusProgress[]
   switchJobs             SwitchJob[]
+  plaidItems             PlaidItem[]
 
   @@index([createdAt])
 }
@@ -474,3 +482,80 @@ model SwitchAuditArtifact {
 
   @@index([jobId, createdAt])
 }
+
+//// Plaid Integration //////////////////////////////////////////////////
+
+model PlaidItem {
+  id                  String          @id @default(uuid())
+  userId              String          @db.Uuid
+  accessToken         String          @unique // Encrypted in production
+  itemId              String          @unique
+  institutionId       String?
+  institutionName     String?
+  status              PlaidItemStatus @default(ACTIVE)
+  errorCode           String?
+  lastSuccessfulUpdate DateTime?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  user         Profile          @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  accounts     PlaidAccount[]
+  transactions PlaidTransaction[]
+
+  @@index([userId])
+  @@index([itemId])
+  @@index([status])
+}
+
+model PlaidAccount {
+  id              String   @id @default(uuid())
+  plaidItemId     String
+  accountId       String   @unique // Plaid's account_id
+  name            String
+  officialName    String?
+  type            String   // depository, credit, loan, investment
+  subtype         String?  // checking, savings, credit card, etc.
+  mask            String?  // Last 4 digits
+  currentBalance  Int?     // In cents
+  availableBalance Int?    // In cents
+  isoCurrencyCode String   @default("USD")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  plaidItem    PlaidItem          @relation(fields: [plaidItemId], references: [id], onDelete: Cascade)
+  transactions PlaidTransaction[]
+
+  @@index([plaidItemId])
+  @@index([accountId])
+}
+
+model PlaidTransaction {
+  id                  String   @id @default(uuid())
+  plaidItemId         String
+  plaidAccountId      String
+  transactionId       String   @unique // Plaid's transaction_id
+  amount              Int      // In cents (positive = outflow, negative = inflow)
+  isoCurrencyCode     String   @default("USD")
+  date                DateTime @db.Date
+  authorizedDate      DateTime? @db.Date
+  name                String   // Merchant name
+  merchantName        String?
+  category            String[] // Plaid's category array
+  categoryId          String?
+  pending             Boolean  @default(false)
+  paymentChannel      String?  // online, in store, etc.
+  transactionType     String?  // place, digital, special, unresolved
+  personalFinanceCategory Json? // Detailed category from Plaid
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  plaidItem    PlaidItem    @relation(fields: [plaidItemId], references: [id], onDelete: Cascade)
+  plaidAccount PlaidAccount @relation(fields: [plaidAccountId], references: [id], onDelete: Cascade)
+
+  @@index([plaidItemId])
+  @@index([plaidAccountId])
+  @@index([transactionId])
+  @@index([date])
+  @@index([merchantName])
+}
+
