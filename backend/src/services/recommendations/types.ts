@@ -98,3 +98,75 @@ export interface CardWithDetails {
     categories: string[];
   }>;
 }
+
+/**
+ * Input parameters for card path generation
+ */
+export interface PathGenerationInput {
+  /** User's reward preference (CASHBACK, TRAVEL, or MISCELLANEOUS) */
+  rewardPreference: RewardType;
+
+  /** User's current credit score */
+  userCreditScore: number;
+
+  /** User's current credit history in years */
+  creditHistoryYears: number;
+
+  /** Lifetime spending by category in cents */
+  lifetimeSpendingByCategory: Partial<Record<Category, number>>;
+
+  /** Selected card ID from initial recommendations */
+  selectedCardId: string;
+
+  /** If true, only include test cards (isTestCard = true). For testing purposes only. */
+  testMode?: boolean;
+}
+
+/**
+ * Single step in a credit card progression path
+ */
+export interface CardPathStep {
+  /** Step number (0-indexed) */
+  stepNumber: number;
+
+  /** Timeframe for this step (e.g., "Year 0-2", "Year 2-4") */
+  timeframe: string;
+
+  /** Card recommendation for this step */
+  card: CardRecommendation;
+
+  /** User's credit score at the start of this step */
+  creditScoreAtStep: number;
+
+  /** User's credit history years at the start of this step */
+  creditHistoryAtStep: number;
+
+  /** Expected credit score improvement from using this card (points) */
+  creditScoreImprovement: number;
+}
+
+/**
+ * Complete credit card progression path
+ */
+export interface CardPath {
+  /** All steps in the progression path */
+  steps: CardPathStep[];
+
+  /** Total value across all cards in the path (cents) */
+  totalPathValue: number;
+
+  /** Total cashback/rewards across all cards (cents) */
+  totalCashback: number;
+
+  /** Total bonuses across all cards (cents) */
+  totalBonuses: number;
+
+  /** Total fees across all cards (cents) */
+  totalFees: number;
+
+  /** Final credit score after completing the path */
+  finalCreditScore: number;
+
+  /** Total duration of the path in years */
+  totalDurationYears: number;
+}
