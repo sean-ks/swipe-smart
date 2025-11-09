@@ -7,7 +7,21 @@ const router = Router();
 // Create profile for new user (called after Supabase signup)
 router.post('/create-profile', async (req, res) => {
   try {
-    const { id, email } = req.body;
+    const {
+      id,
+      email,
+      firstName,
+      lastName,
+      phone,
+      creditHistoryAge,
+      creditScore,
+      knowsCreditScore,
+      travelGoal,
+      diningGoal,
+      buildCreditGoal,
+      cashbackGoal,
+      onlineShoppingGoal
+    } = req.body;
 
     console.log('Create profile request received:', { id, email });
 
@@ -33,15 +47,25 @@ router.post('/create-profile', async (req, res) => {
       });
     }
 
-    // Create new profile
+    // Create new profile with ALL data at once
     const newProfile = await prisma.profile.create({
       data: {
         userId: id,
-        // Other fields will be filled during onboarding
+        firstName: firstName || null,
+        lastName: lastName || null,
+        phone: phone || null,
+        creditHistoryAge: creditHistoryAge || null,
+        creditScore: creditScore || null,
+        knowsCreditScore: knowsCreditScore || null,
+        travelGoal: travelGoal || null,
+        diningGoal: diningGoal || null,
+        buildCreditGoal: buildCreditGoal || null,
+        cashbackGoal: cashbackGoal || null,
+        onlineShoppingGoal: onlineShoppingGoal || null,
       }
     });
 
-    console.log('Profile created successfully:', newProfile.userId);
+    console.log('Profile created successfully with full data:', newProfile.userId);
 
     return res.status(201).json({
       message: 'Profile created successfully',
