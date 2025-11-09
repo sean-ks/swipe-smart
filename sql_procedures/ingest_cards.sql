@@ -21,21 +21,26 @@ begin
   loop
     c := card_row.value;
 
-    -- upsert catalog (conflict on issuer+name will return the existing or new id)
+    select coalesce(
+             nullif(c->>'id',''),
+             (select id from "CardsCatalog" where issuer = c->>'issuer' and name = c->>'name' limit 1),
+             gen_random_uuid()::text
+           ) into cid;
+
     insert into "CardsCatalog" as cc(
       id, name, issuer, network, "isChargeCard",
-      "annualFeeCents", "feeCreditsCents", "minScoreBand",
+      "annualFeeCents", "feeCreditsCents", "minCreditScore",
       "valuationCpp", active, "sourceUrl", "termsUrl",
       "lastVerifiedAt", "cardMetadata", "createdAt", "updatedAt"
     ) values (
-      gen_random_uuid(),
+      cid,
       c->>'name',
       c->>'issuer',
       upper(c->>'network')::"CardNetwork",
       coalesce((c->>'isChargeCard')::boolean, false),
       coalesce((c->>'annualFeeCents')::int, 0),
       coalesce((c#>>'{feeCredits,totalAnnualCreditsCents}')::int, 0),
-      nullif(c->>'minScoreBand','')::"ScoreBand",
+      case when nullif(c->>'minCreditScore','') is null then null else (c->>'minCreditScore')::int end,
       nullif(c->>'valuationCpp','')::numeric,
       coalesce((c->>'active')::boolean, true),
       coalesce(c->>'sourceUrl', c#>>'{scraping,sourceUrl}'),
@@ -45,13 +50,14 @@ begin
       v_now,
       v_now
     )
-    on conflict (issuer, name) do update
+    on conflict (id) do update
       set name = excluded.name,
+          issuer = excluded.issuer,
           network = excluded.network,
           "isChargeCard" = excluded."isChargeCard",
           "annualFeeCents" = excluded."annualFeeCents",
           "feeCreditsCents" = excluded."feeCreditsCents",
-          "minScoreBand" = excluded."minScoreBand",
+          "minCreditScore" = excluded."minCreditScore",
           "valuationCpp" = excluded."valuationCpp",
           active = excluded.active,
           "sourceUrl" = excluded."sourceUrl",
@@ -83,7 +89,9 @@ begin
            case when jsonb_typeof(er->'merchantsInclude')='array' then er->'merchantsInclude' else null end,
            er->>'note',
            coalesce((er->>'isRotating')::boolean, false)
-    from jsonb_array_elements(coalesce(c#>'{rewards,earnRates}','[]'::jsonb)) er;
+    from jsonb_array_elements(coalesce(c#>'{rewards,earnRates}','[]'::jsonb)) er
+    where coalesce(er->>'category','') <> ''
+      and coalesce(er->>'ratePct','') <> '';
 
     -- add baseRatePct as general category if it exists and no general category already defined
     if (c#>>'{rewards,baseRatePct}') is not null

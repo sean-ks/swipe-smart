@@ -1,0 +1,563 @@
+version: 1
+generatedAt: '2025-11-09'
+notes: Curated set of mainstream cards with issuer-sourced data. Placeholder values only where public data is unavailable.
+enums:
+  CardNetwork:
+    - VISA
+    - MASTERCARD
+    - AMEX
+    - DISCOVER
+  Category:
+    - groceries
+    - dining
+    - gas
+    - transit
+    - travel
+    - online
+    - general
+    - utilities
+    - streaming
+    - drugstore
+
+cards:
+  - name: Capital One Venture X
+    issuer: Capital One
+    network: VISA
+    isChargeCard: false
+    annualFeeCents: 39500
+    feeCredits:
+      totalAnnualCreditsCents: 50000
+      items:
+        - name: Capital One Travel credit
+          amountCents: 30000
+          cadence: annual
+          conditions: Applies automatically to bookings made through Capital One Travel.
+        - name: Global Entry or TSA PreCheck credit
+          amountCents: 10000
+          cadence: every_4_years
+          conditions: Statement credit every 4 years for eligible applications.
+        - name: Anniversary miles value
+          amountCents: 10000
+          cadence: annual
+          conditions: 10K bonus miles each anniversary (~$100 at 1¢/mile).
+    minCreditScore: 720
+    valuationCpp: 1.85
+    active: true
+    rewards:
+      baseRatePct: 0.02
+      earnRates:
+        - category: travel
+          ratePct: 0.1
+          note: 10x miles on hotels and rental cars booked via Capital One Travel.
+        - category: travel
+          ratePct: 0.05
+          note: 5x miles on flights booked through Capital One Travel.
+    bonuses:
+      - kind: WELCOME
+        points: 75000
+        cashCents: null
+        windowMonths: 3
+        minSpendCents: 400000
+        expirationText: Earn 75,000 bonus miles after $4,000 spend within 3 months.
+        footnotes:
+          - Anniversary 10K bonus miles and lounge access benefits remain available.
+    pacing:
+      minDaysBetweenNewCards: 90
+    apr:
+      purchaseAPR:
+        type: variable
+        rangePct:
+          min: 19.99
+          max: 29.99
+        index: Prime
+      balanceTransferAPR:
+        rangePct:
+          min: 19.99
+          max: 29.99
+        fee:
+          pct: 0.03
+          minCents: 0
+      cashAdvanceAPR:
+        pct: 29.99
+      penaltyAPR:
+        pct: 0
+    fees:
+      foreignTransaction:
+        type: NONE
+        pct: 0
+      balanceTransferFee:
+        pct: 0.03
+        minCents: 0
+      cashAdvanceFee:
+        pct: 0.05
+        minCents: 500
+      lateFeeCents: 4000
+      returnedPaymentFeeCents: 4000
+    eligibility:
+      suggestedHistoryYears: 2
+      utilizationNote: Excellent credit and low utilization recommended.
+      otherNotes:
+        - Capital One limits approvals to two personal cards every 90 days.
+    benefits:
+      - $300 annual Capital One Travel credit.
+      - 10,000 anniversary miles each year.
+      - Priority Pass + Capital One Lounge access for primary and authorized users.
+      - Global Entry/TSA PreCheck credit every four years.
+      - Primary rental coverage and trip cancellation/interruption protection.
+    cashbackTable:
+      rows:
+        - category: travel
+          ratePct: 0.1
+        - category: general
+          ratePct: 0.02
+    scraping:
+      source: capitalone
+      sourceUrl: https://www.capitalone.com/credit-cards/venture-x/
+      termsUrl: https://www.capitalone.com/credit-cards/venture-x/
+      lastVerifiedAt: '2025-11-09'
+
+  - name: Chase Sapphire Reserve
+    issuer: Chase
+    network: VISA
+    isChargeCard: false
+    annualFeeCents: 79500
+    feeCredits:
+      totalAnnualCreditsCents: 140000
+      items:
+        - name: Travel credit
+          amountCents: 30000
+          cadence: annual
+          conditions: Automatically reimburses qualifying travel purchases.
+        - name: Dining experiences credit
+          amountCents: 30000
+          cadence: annual
+          conditions: Via Sapphire Reserve Exclusive Tables offers.
+        - name: Chase travel hotel credit
+          amountCents: 50000
+          cadence: annual
+          conditions: For bookings made through Chase’s premium hotel collection.
+        - name: Entertainment credit
+          amountCents: 30000
+          cadence: annual
+          conditions: StubHub/viagogo purchases through linked perks.
+    minCreditScore: 730
+    valuationCpp: 2.05
+    active: true
+    rewards:
+      baseRatePct: 0.01
+      earnRates:
+        - category: travel
+          ratePct: 0.08
+          note: 8x on travel booked via Chase Travel (after credit usage).
+        - category: travel
+          ratePct: 0.04
+          note: 4x on flights and hotels booked directly.
+        - category: dining
+          ratePct: 0.03
+          note: 3x on dining worldwide.
+        - category: transit
+          ratePct: 0.05
+          note: 5x on Lyft rides through March 2025.
+    bonuses:
+      - kind: WELCOME
+        points: 125000
+        cashCents: null
+        windowMonths: 3
+        minSpendCents: 600000
+        expirationText: Earn 125,000 bonus points after $6,000 spend in 3 months.
+        footnotes:
+          - Points worth 50% more when redeemed for travel via Chase Travel.
+    pacing:
+      minDaysBetweenNewCards: 90
+    apr:
+      purchaseAPR:
+        type: variable
+        rangePct:
+          min: 19.99
+          max: 28.49
+        index: Prime
+      balanceTransferAPR:
+        rangePct:
+          min: 19.99
+          max: 28.49
+        fee:
+          pct: 0.05
+          minCents: 500
+      cashAdvanceAPR:
+        pct: 29.99
+      penaltyAPR:
+        pct: 29.99
+    fees:
+      foreignTransaction:
+        type: NONE
+        pct: 0
+      balanceTransferFee:
+        pct: 0.05
+        minCents: 500
+      cashAdvanceFee:
+        pct: 0.05
+        minCents: 1000
+      lateFeeCents: 4000
+      returnedPaymentFeeCents: 4000
+    eligibility:
+      suggestedHistoryYears: 3
+      utilizationNote: Must satisfy Chase 5/24 policy; excellent credit recommended.
+      otherNotes:
+        - Authorized user fee $195; includes Priority Pass lounge access.
+    benefits:
+      - $300 annual travel credit plus additional dining/hotel perks.
+      - Priority Pass + Sapphire Lounge access.
+      - Global Entry/TSA PreCheck/NEXUS credit every 4 years.
+      - Comprehensive travel insurance and primary rental coverage.
+      - DoorDash DashPass and other rotating partner perks.
+    cashbackTable:
+      rows:
+        - category: travel
+          ratePct: 0.08
+        - category: dining
+          ratePct: 0.03
+        - category: general
+          ratePct: 0.01
+    scraping:
+      source: chase
+      sourceUrl: https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve
+      termsUrl: https://applynow.chase.com/FlexAppWeb/renderApp.do?SPID=FLQ1
+      lastVerifiedAt: '2025-11-09'
+
+  - name: Bank of America Premium Rewards Elite
+    issuer: Bank of America
+    network: VISA
+    isChargeCard: false
+    annualFeeCents: 55000
+    feeCredits:
+      totalAnnualCreditsCents: 45000
+      items:
+        - name: Airline incidental credit
+          amountCents: 30000
+          cadence: annual
+          conditions: Checked bags, lounge passes, in-flight refreshments.
+        - name: Lifestyle credit
+          amountCents: 15000
+          cadence: annual
+          conditions: Streaming, food delivery, rideshare, or fitness expenses.
+    minCreditScore: 700
+    valuationCpp: 1.2
+    active: true
+    rewards:
+      baseRatePct: 0.015
+      earnRates:
+        - category: travel
+          ratePct: 0.02
+          note: 2x on travel purchases.
+        - category: dining
+          ratePct: 0.02
+          note: 2x on dining purchases.
+    bonuses:
+      - kind: WELCOME
+        points: 75000
+        cashCents: null
+        windowMonths: 3
+        minSpendCents: 500000
+        expirationText: Earn 75,000 bonus points after $5,000 spend in 90 days.
+        footnotes:
+          - Preferred Rewards clients earn 25%-75% bonus points on every purchase.
+    pacing:
+      minDaysBetweenNewCards: 90
+    apr:
+      purchaseAPR:
+        type: variable
+        rangePct:
+          min: 20.24
+          max: 28.24
+        index: Prime
+      balanceTransferAPR:
+        rangePct:
+          min: 20.24
+          max: 28.24
+        fee:
+          pct: 0.04
+          minCents: 0
+      cashAdvanceAPR:
+        rangePct:
+          min: 23.24
+          max: 29.24
+      penaltyAPR:
+        pct: 29.99
+    fees:
+      foreignTransaction:
+        type: NONE
+        pct: 0
+      balanceTransferFee:
+        pct: 0.04
+        minCents: 0
+      cashAdvanceFee:
+        pct: 0.05
+        minCents: 1000
+      lateFeeCents: 4000
+      returnedPaymentFeeCents: 4000
+    eligibility:
+      suggestedHistoryYears: 3
+      utilizationNote: Strong Bank of America relationship improves approval odds.
+      otherNotes:
+        - Subject to Bank of America 2/3/4 new account policy.
+    benefits:
+      - $300 airline incidental + $150 lifestyle credits annually.
+      - Priority Pass Select access for primary cardholder and authorized users.
+      - $100 Global Entry/TSA PreCheck credit every 4 years.
+      - 20% discount when redeeming points for airfare through Bank of America Travel Center.
+      - Comprehensive travel protections.
+    cashbackTable:
+      rows:
+        - category: travel
+          ratePct: 0.02
+        - category: dining
+          ratePct: 0.02
+        - category: general
+          ratePct: 0.015
+    scraping:
+      source: bankofamerica
+      sourceUrl: https://www.bankofamerica.com/credit-cards/products/premium-rewards-elite-credit-card/
+      termsUrl: https://www.bankofamerica.com/credit-cards/terms-and-conditions/
+      lastVerifiedAt: '2025-11-09'
+
+  - name: Chase Freedom Rise
+    issuer: Chase
+    network: VISA
+    isChargeCard: false
+    annualFeeCents: 0
+    feeCredits:
+      totalAnnualCreditsCents: 0
+      items: []
+    minCreditScore: 600
+    valuationCpp: 1.0
+    active: true
+    rewards:
+      baseRatePct: 0.015
+      earnRates: []
+    bonuses:
+      - kind: OTHER
+        points: null
+        cashCents: 2500
+        windowMonths: 3
+        minSpendCents: 0
+        expirationText: Receive $25 statement credit after enabling auto pay within 3 months.
+        footnotes:
+          - $250 Chase deposit within 96 hours of applying may improve approval odds.
+    pacing:
+      minDaysBetweenNewCards: 90
+    apr:
+      purchaseAPR:
+        type: variable
+        rangePct:
+          min: 25.49
+          max: 29.99
+        index: Prime
+      balanceTransferAPR:
+        rangePct:
+          min: 25.49
+          max: 29.99
+        fee:
+          pct: 0.05
+          minCents: 500
+      cashAdvanceAPR:
+        rangePct:
+          min: 28.74
+          max: 29.99
+      penaltyAPR:
+        pct: 29.99
+    fees:
+      foreignTransaction:
+        type: PERCENT
+        pct: 0.03
+      balanceTransferFee:
+        pct: 0.05
+        minCents: 500
+      cashAdvanceFee:
+        pct: 0.05
+        minCents: 1000
+      lateFeeCents: 4000
+      returnedPaymentFeeCents: 4000
+    eligibility:
+      suggestedHistoryYears: 0
+      utilizationNote: Designed for building credit; linked Chase deposit boosts odds.
+      otherNotes:
+        - DashPass 6-month membership benefit for a limited time.
+    benefits:
+      - Flat 1.5% cash back on all purchases.
+      - $25 auto-pay statement credit.
+      - Complimentary DashPass trial plus fraud protection alerts.
+    cashbackTable:
+      rows:
+        - category: general
+          ratePct: 0.015
+    scraping:
+      source: chase
+      sourceUrl: https://creditcards.chase.com/cash-back-credit-cards/freedom/rise
+      termsUrl: https://sites.chase.com/services/creatives/pricingandterms.html/content/dam/pricingandterms/LGC57233.html
+      lastVerifiedAt: '2025-11-09'
+
+  - name: Capital One Platinum
+    issuer: Capital One
+    network: MASTERCARD
+    isChargeCard: false
+    annualFeeCents: 0
+    feeCredits:
+      totalAnnualCreditsCents: 0
+      items: []
+    minCreditScore: 600
+    valuationCpp: null
+    active: true
+    rewards:
+      baseRatePct: 0.0
+      earnRates: []
+    bonuses: []
+    pacing:
+      minDaysBetweenNewCards: 90
+    apr:
+      purchaseAPR:
+        type: variable
+        rangePct:
+          min: 29.49
+          max: 29.49
+        index: Prime
+      balanceTransferAPR:
+        rangePct:
+          min: 29.49
+          max: 29.49
+        fee:
+          pct: 0.04
+          minCents: 0
+      cashAdvanceAPR:
+        pct: 29.49
+      penaltyAPR:
+        pct: 0
+    fees:
+      foreignTransaction:
+        type: NONE
+        pct: 0
+      balanceTransferFee:
+        pct: 0.04
+        minCents: 0
+      cashAdvanceFee:
+        pct: 0.05
+        minCents: 500
+      lateFeeCents: 4000
+      returnedPaymentFeeCents: 0
+    eligibility:
+      suggestedHistoryYears: 1
+      utilizationNote: Fair credit card; eligible for higher limits after timely payments.
+      otherNotes:
+        - Includes CreditWise monitoring and ability to set custom due dates.
+    benefits:
+      - No annual fee and $0 fraud liability.
+      - Automatic credit-line reviews after six months.
+      - Contactless payments plus travel/emergency assistance services.
+    cashbackTable:
+      rows:
+        - category: general
+          ratePct: 0.0
+    scraping:
+      source: capitalone
+      sourceUrl: https://www.capitalone.com/credit-cards/platinum/
+      termsUrl: https://d25970n8puso9u.cloudfront.net/disclosure.36291.en-US.pdf
+      lastVerifiedAt: '2025-11-09'
+
+  - name: Blue Cash Everyday
+    issuer: American Express
+    network: AMEX
+    isChargeCard: false
+    annualFeeCents: 0
+    feeCredits:
+      totalAnnualCreditsCents: 8400
+      items:
+        - name: Disney Bundle credit
+          amountCents: 8400
+          cadence: monthly
+          conditions: Up to $7 per month for Disney+, Hulu, or ESPN+ (enrollment required).
+    minCreditScore: 680
+    valuationCpp: 1.0
+    active: true
+    rewards:
+      baseRatePct: 0.01
+      earnRates:
+        - category: groceries
+          ratePct: 0.03
+          note: 3% at U.S. supermarkets on up to $6k per year.
+        - category: gas
+          ratePct: 0.03
+          note: 3% at U.S. gas stations on up to $6k per year.
+        - category: online
+          ratePct: 0.03
+          note: 3% on select U.S. online retail purchases on up to $6k per year.
+    bonuses:
+      - kind: WELCOME
+        points: null
+        cashCents: 20000
+        windowMonths: 6
+        minSpendCents: 200000
+        expirationText: Earn $200 statement credit after $2,000 spend in 6 months.
+        footnotes:
+          - Reward Dollars redeemable as statement credit or at Amazon.com.
+    pacing:
+      minDaysBetweenNewCards: 90
+    apr:
+      purchaseAPR:
+        type: variable
+        rangePct:
+          min: 19.74
+          max: 28.74
+        index: Prime
+        introOffer:
+          introPct: 0.0
+          introMonths: 15
+      balanceTransferAPR:
+        rangePct:
+          min: 19.74
+          max: 28.74
+        introOffer:
+          introPct: 0.0
+          introMonths: 15
+        fee:
+          pct: 0.03
+          minCents: 500
+      cashAdvanceAPR:
+        pct: 28.99
+      penaltyAPR:
+        pct: 29.99
+    fees:
+      foreignTransaction:
+        type: PERCENT
+        pct: 0.027
+      balanceTransferFee:
+        pct: 0.03
+        minCents: 500
+      cashAdvanceFee:
+        pct: 0.05
+        minCents: 1000
+      lateFeeCents: 4000
+      returnedPaymentFeeCents: 4000
+    eligibility:
+      suggestedHistoryYears: 2
+      utilizationNote: Good to excellent credit recommended; no bonus if you’ve had the card previously.
+      otherNotes:
+        - U.S. residents only; Amex considers recent account openings.
+    benefits:
+      - 3% cash back on supermarkets, gas, and eligible online retail.
+      - $7/month Disney Bundle credit (enrollment required).
+      - 0% intro APR for 15 months on purchases and balance transfers.
+      - Plan It option plus purchase protection and extended warranty.
+    cashbackTable:
+      rows:
+        - category: groceries
+          ratePct: 0.03
+        - category: gas
+          ratePct: 0.03
+        - category: online
+          ratePct: 0.03
+        - category: general
+          ratePct: 0.01
+    scraping:
+      source: americanexpress
+      sourceUrl: https://www.americanexpress.com/us/credit-cards/card/blue-cash-everyday/
+      termsUrl: https://www.americanexpress.com/us/credit-cards/card-application/apply/prospect/terms/blue-cash-everyday-credit-card/
+      lastVerifiedAt: '2025-11-09'
