@@ -31,26 +31,33 @@ export default function SignUp({ onNavigate }: SignUpProps) {
       setError('Password must be at least 6 characters');
       return;
     }
-    
+
     setLoading(true);
     setError(null);
 
     try {
-      const { user, session } = await api.auth.signUp({ email, password });
-      
-      // Set the session in Supabase client for auth state
-      if (session) {
-        await supabase.auth.setSession(session);
+      // Step 1: Sign up with Supabase
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        // Step 2: Create profile in our database
+        await api.auth.createProfile(data.user.id, data.user.email!);
+
+        // Navigate to signup flow for additional info
+        onNavigate('signup-flow');
       }
-      
-      onNavigate('signup-flow');
     } catch (error) {
-      console.error('Email signup error:', error);
+      console.error('Signup error:', error);
       setError(error instanceof Error ? error.message : 'An error occurred during sign up');
     } finally {
       setLoading(false);
     }
-  };;
+  };
 
   const handleGoogleSignUp = async () => {
     setLoading(true);

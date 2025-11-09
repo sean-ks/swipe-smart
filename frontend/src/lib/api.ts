@@ -2,16 +2,6 @@ import { supabase } from './supabase';
 
 const API_BASE = '/api';
 
-export interface SignUpData {
-  email: string;
-  password: string;
-}
-
-export interface SignInData {
-  email: string;
-  password: string;
-}
-
 export interface ProfileData {
   firstName?: string;
   lastName?: string;
@@ -28,29 +18,18 @@ export interface ProfileData {
 
 export const api = {
   auth: {
-    async signUp(data: SignUpData) {
-      const response = await fetch(`${API_BASE}/auth/signup`, {
+    async createProfile(userId: string, email: string) {
+      const response = await fetch(`${API_BASE}/auth/create-profile`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ id: userId, email }),
       });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Signup failed');
-      }
-      return response.json();
-    },
 
-    async signIn(data: SignInData) {
-      const response = await fetch(`${API_BASE}/auth/signin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Sign in failed');
+        throw new Error(error.error || 'Failed to create profile');
       }
+
       return response.json();
     },
 
@@ -61,9 +40,11 @@ export const api = {
           'Authorization': `Bearer ${session?.access_token}`,
         },
       });
+
       if (!response.ok) {
         throw new Error('Failed to fetch profile');
       }
+
       return response.json();
     },
 
@@ -77,9 +58,11 @@ export const api = {
         },
         body: JSON.stringify(data),
       });
+
       if (!response.ok) {
         throw new Error('Failed to update profile');
       }
+
       return response.json();
     },
   },
