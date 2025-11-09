@@ -8,18 +8,21 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { ArrowLeft, ArrowRight, CreditCard } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+import { api } from '../lib/api';
+import { PlaidLinkButton } from './plaid/PlaidLinkButton';
+import { PlaidItemsList } from './plaid/PlaidItemsList';
+import { usePlaidItems } from '../hooks/usePlaidItems';
 
 interface SignUpFlowProps {
   onNavigate: (screen: string) => void;
 }
-
-import { api } from '../lib/api';
 
 export default function SignUpFlow({ onNavigate }: SignUpFlowProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
+  const { items: plaidItems, loading: plaidLoading, error: plaidError, refresh: refreshPlaidItems } = usePlaidItems();
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -82,7 +85,7 @@ export default function SignUpFlow({ onNavigate }: SignUpFlowProps) {
     } finally {
       setLoading(false);
     }
-  };;
+  };
 
   const handleBack = () => {
     if (currentStep > 1) {
@@ -278,8 +281,8 @@ export default function SignUpFlow({ onNavigate }: SignUpFlowProps) {
               >
                 <h2 className="text-white mb-6">Link Bank Accounts</h2>
                 
-                <div className="bg-white/10 p-6 rounded-lg border-2 border-white/20">
-                  <div className="flex items-start gap-4 mb-6">
+                <div className="bg-white/10 p-6 rounded-lg border-2 border-white/20 space-y-4">
+                  <div className="flex items-start gap-4">
                     <CreditCard className="w-8 h-8 text-white flex-shrink-0" />
                     <div className="text-white">
                       <p className="mb-4">
@@ -291,9 +294,24 @@ export default function SignUpFlow({ onNavigate }: SignUpFlowProps) {
                     </div>
                   </div>
 
-                  <Button className="w-full bg-white text-[#4962bf] hover:bg-white/90">
-                    Connect Bank Account with Plaid
-                  </Button>
+                  <PlaidLinkButton
+                    buttonText="Connect Bank Account with Plaid"
+                    onSuccess={refreshPlaidItems}
+                    className="w-full bg-white text-[#4962bf] hover:bg-white/90"
+                  />
+                </div>
+
+                <div className="bg-white/5 border-2 border-white/20 rounded-xl p-4">
+                  <PlaidItemsList
+                    items={plaidItems}
+                    loading={plaidLoading}
+                    error={plaidError}
+                    onRemove={async (itemId) => {
+                      await api.plaid.removeItem(itemId);
+                      await refreshPlaidItems();
+                    }}
+                    onRefresh={refreshPlaidItems}
+                  />
                 </div>
 
                 <button className="text-white/70 hover:text-white underline text-sm">
