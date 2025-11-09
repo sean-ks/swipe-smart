@@ -16,6 +16,68 @@ export interface ProfileData {
   onlineShoppingGoal?: string;
 }
 
+export interface PlaidAccountSummary {
+  id: string;
+  name: string;
+  subtype: string | null;
+  mask: string | null;
+  currentBalance: number | null;
+}
+
+export interface PlaidItemSummary {
+  id: string;
+  institutionName: string | null;
+  institutionId: string | null;
+  status: 'ACTIVE' | 'LOGIN_REQUIRED' | 'ERROR' | 'DISCONNECTED';
+  errorCode: string | null;
+  lastSuccessfulUpdate: string | null;
+  createdAt: string;
+  accounts: PlaidAccountSummary[];
+}
+
+async function authorizedFetch(
+  path: string,
+  init: RequestInit = {},
+  options: { json?: boolean } = {}
+) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session?.access_token) {
+    throw new Error('You must be signed in to perform this action.');
+  }
+
+  const headers = new Headers(init.headers || {});
+  headers.set('Authorization', `Bearer ${session.access_token}`);
+
+  const shouldSendJson =
+    options.json !== false &&
+    init.body !== undefined &&
+    !headers.has('Content-Type');
+
+  if (shouldSendJson) {
+    headers.set('Content-Type', 'application/json');
+  }
+
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...init,
+    headers,
+  });
+
+  if (!response.ok) {
+    let details: any = null;
+    try {
+      details = await response.json();
+    } catch {
+      // ignore JSON parse errors
+    }
+    throw new Error(details?.error || 'Request failed');
+  }
+
+  return response.json();
+}
+
 export const api = {
   auth: {
     async createProfile(userId: string, email: string) {
@@ -34,36 +96,61 @@ export const api = {
     },
 
     async getProfile() {
-      const { data: { session } } = await supabase.auth.getSession();
-      const response = await fetch(`${API_BASE}/auth/profile`, {
-        headers: {
-          'Authorization': `Bearer ${session?.access_token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch profile');
-      }
-
-      return response.json();
+      return authorizedFetch('/auth/profile');
     },
 
     async updateProfile(data: ProfileData) {
-      const { data: { session } } = await supabase.auth.getSession();
-      const response = await fetch(`${API_BASE}/auth/profile`, {
+      return authorizedFetch('/auth/profile', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session?.access_token}`,
-        },
         body: JSON.stringify(data),
       });
+    },
+  },
 
-      if (!response.ok) {
-        throw new Error('Failed to update profile');
-      }
+  plaid: {
+    async createLinkToken(plaidItemId?: string) {
+      return authorizedFetch('/plaid/link-token', {
+        method: 'POST',
+        body: JSON.stringify({ plaidItemId }),
+      });
+    },
 
-      return response.json();
+    async exchangePublicToken(publicToken: string) {
+      return authorizedFetch('/plaid/exchange-public-token', {
+        method: 'POST',
+        body: JSON.stringify({ publicToken }),
+      });
+    },
+
+    async getItems() {
+      return authorizedFetch('/plaid/items');
+    },
+
+    async removeItem(itemId: string) {
+      return authorizedFetch(`/plaid/items/${itemId}`, {
+        method: 'DELETE',
+      });
+    },
+
+    async updateItemStatus(itemId: string, status: PlaidItemSummary['status'], errorCode?: string) {
+      return authorizedFetch(`/plaid/items/${itemId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status, errorCode }),
+      });
+    },
+
+    async fetchTransactions(plaidItemId: string) {
+      return authorizedFetch('/plaid/transactions', {
+        method: 'POST',
+        body: JSON.stringify({ plaidItemId }),
+      });
+    },
+
+    async refreshAccounts(plaidItemId: string) {
+      return authorizedFetch('/plaid/accounts', {
+        method: 'POST',
+        body: JSON.stringify({ plaidItemId }),
+      });
     },
   },
 };
