@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { getTopCardRecommendations } from '../services/recommendations/cardRecommendations';
 import { generateCardPath } from '../services/recommendations/cardPath';
-import { CardRecommendationInput, PathGenerationInput } from '../services/recommendations/types';
+import { generateUpgradePath } from '../services/recommendations/upgradePath';
+import { CardRecommendationInput, PathGenerationInput, UpgradePathInput } from '../services/recommendations/types';
 import { RewardType, Category } from '../../../generated/prisma';
 
 /**
@@ -152,6 +153,78 @@ export async function getCardPath(req: Request, res: Response) {
     console.error('Error generating card path:', error);
     return res.status(500).json({
       error: 'Internal server error while generating card path',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+}
+
+/**
+ * POST /api/recommendations/upgrade-path
+ * Generate a simplified upgrade path showing card progression from starter to premium
+ */
+export async function getUpgradePath(req: Request, res: Response) {
+  try {
+    const {
+      rewardPreference,
+      userCreditScore,
+      creditHistoryYears,
+      lifetimeSpendingByCategory,
+      currentCardIds = [],
+      testMode = false,
+    } = req.body;
+
+    // Validation
+    if (!rewardPreference || !['CASHBACK', 'TRAVEL', 'MISCELLANEOUS'].includes(rewardPreference)) {
+      return res.status(400).json({
+        error: 'Invalid or missing rewardPreference. Must be CASHBACK, TRAVEL, or MISCELLANEOUS',
+      });
+    }
+
+    if (typeof userCreditScore !== 'number' || userCreditScore < 300 || userCreditScore > 850) {
+      return res.status(400).json({
+        error: 'Invalid userCreditScore. Must be a number between 300 and 850',
+      });
+    }
+
+    if (typeof creditHistoryYears !== 'number' || creditHistoryYears < 0) {
+      return res.status(400).json({
+        error: 'Invalid creditHistoryYears. Must be a non-negative number',
+      });
+    }
+
+    if (!lifetimeSpendingByCategory || typeof lifetimeSpendingByCategory !== 'object') {
+      return res.status(400).json({
+        error: 'Invalid lifetimeSpendingByCategory. Must be an object mapping categories to amounts',
+      });
+    }
+
+    if (!Array.isArray(currentCardIds)) {
+      return res.status(400).json({
+        error: 'Invalid currentCardIds. Must be an array of card IDs',
+      });
+    }
+
+    // Prepare input
+    const input: UpgradePathInput = {
+      rewardPreference: rewardPreference as RewardType,
+      userCreditScore,
+      creditHistoryYears,
+      lifetimeSpendingByCategory: lifetimeSpendingByCategory as Partial<Record<Category, number>>,
+      currentCardIds,
+      testMode,
+    };
+
+    // Generate upgrade path
+    const upgradePath = await generateUpgradePath(input);
+
+    // Return only card names as a simple list
+    const cardNames = upgradePath.cards.map(card => card.cardName);
+
+    return res.status(200).json(cardNames);
+  } catch (error) {
+    console.error('Error generating upgrade path:', error);
+    return res.status(500).json({
+      error: 'Internal server error while generating upgrade path',
       message: error instanceof Error ? error.message : 'Unknown error',
     });
   }

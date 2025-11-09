@@ -170,3 +170,66 @@ export interface CardPath {
   /** Total duration of the path in years */
   totalDurationYears: number;
 }
+
+/**
+ * Input for upgrade path generation (simplified version without time periods)
+ */
+export interface UpgradePathInput {
+  /** User's reward preference (CASHBACK, TRAVEL, or MISCELLANEOUS) */
+  rewardPreference: RewardType;
+
+  /** User's current credit score */
+  userCreditScore: number;
+
+  /** User's current credit history in years */
+  creditHistoryYears: number;
+
+  /** Lifetime spending by category in cents */
+  lifetimeSpendingByCategory: Partial<Record<Category, number>>;
+
+  /** List of card IDs the user currently has (optional) */
+  currentCardIds?: string[];
+
+  /** If true, only include test cards (isTestCard = true). For testing purposes only. */
+  testMode?: boolean;
+}
+
+/**
+ * Single card in the upgrade path (simplified - no timeframes)
+ */
+export interface UpgradePathCard {
+  /** Card ID */
+  cardId: string;
+
+  /** Card name */
+  cardName: string;
+
+  /** Card issuer */
+  issuer: string;
+
+  /** Reward type */
+  rewardType: RewardType | null;
+
+  /** Minimum credit score required */
+  minCreditScore: number | null;
+
+  /** Annual fee in cents */
+  annualFeeCents: number;
+}
+
+/**
+ * Complete upgrade path showing progression from starter to premium cards
+ */
+export interface UpgradePath {
+  /** Ordered list of cards from starter to premium (typically 3-5 cards) */
+  cards: UpgradePathCard[];
+
+  /** User's reward preference */
+  rewardPreference: RewardType;
+
+  /** Starting credit score */
+  startingCreditScore: number;
+
+  /** Ending credit score (at final card tier) */
+  endingCreditScore: number;
+}
