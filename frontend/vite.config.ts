@@ -59,7 +59,7 @@
       open: true,
       proxy: {
         '/api': {
-          target: 'http://localhost:5000',
+          target: 'http://localhost:5001',
           changeOrigin: true,
         },
       },
