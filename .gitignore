@@ -7,4 +7,12 @@ node_modules
 # Vite
 .vite
 
-.DS_Store
+# cc
+.serena/
+.claude/
+CLAUDE.md
+CUSTOM_SUBAGENT_PROMPT.md
+AUTONOMOUS-DEBUGGING-PROTOCOL.md
+TPM-PROTOCOL.md
+CHANGELOG.md
+swipe-smart-design-mockup/

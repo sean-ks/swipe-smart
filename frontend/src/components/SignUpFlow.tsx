@@ -13,6 +13,8 @@ interface SignUpFlowProps {
   onNavigate: (screen: string) => void;
 }
 
+import { api } from '../lib/api';
+
 export default function SignUpFlow({ onNavigate }: SignUpFlowProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -54,35 +56,33 @@ export default function SignUpFlow({ onNavigate }: SignUpFlowProps) {
     setError(null);
 
     try {
-      const { error: updateError } = await supabase
-        .from('Profile')
-        .update({
-          firstName: formData.firstName || null,
-          lastName: formData.lastName || null,
-          phone: formData.phone || null,
-          creditHistoryAge: formData.creditHistoryAge || null,
-          creditScore: formData.creditScore ? parseInt(formData.creditScore) : null,
-          knowsCreditScore: formData.knowsCreditScore === 'yes',
-          travelGoal: formData.travelGoal || null,
-          diningGoal: formData.diningGoal || null,
-          buildCreditGoal: formData.buildCreditGoal || null,
-          cashbackGoal: formData.cashbackGoal || null,
-          onlineShoppingGoal: formData.onlineShoppingGoal || null,
-          updatedAt: new Date().toISOString(),
-        })
-        .eq('userId', user.id);
+      // Prepare the profile data
+      const profileData = {
+        firstName: formData.firstName || undefined,
+        lastName: formData.lastName || undefined,
+        phone: formData.phone || undefined,
+        creditHistoryAge: formData.creditHistoryAge || undefined,
+        creditScore: formData.creditScore ? parseInt(formData.creditScore) : undefined,
+        knowsCreditScore: formData.knowsCreditScore === 'yes',
+        travelGoal: formData.travelGoal || undefined,
+        diningGoal: formData.diningGoal || undefined,
+        buildCreditGoal: formData.buildCreditGoal || undefined,
+        cashbackGoal: formData.cashbackGoal || undefined,
+        onlineShoppingGoal: formData.onlineShoppingGoal || undefined,
+      };
 
-      if (updateError) {
-        setError(updateError.message);
-        setLoading(false);
-      } else {
-        onNavigate('dashboard');
-      }
-    } catch (err) {
-      setError('Failed to save profile data');
+      // Update profile via API
+      await api.auth.updateProfile(profileData);
+
+      console.log('Profile updated successfully!');
+      onNavigate('dashboard');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setError('Failed to save your profile. Please try again.');
+    } finally {
       setLoading(false);
     }
-  };
+  };;
 
   const handleBack = () => {
     if (currentStep > 1) {

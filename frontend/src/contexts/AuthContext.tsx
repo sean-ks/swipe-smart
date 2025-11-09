@@ -13,6 +13,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+import { api } from '../lib/api';
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -36,15 +38,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Check if this is a new user signing in with OAuth
       if (event === 'SIGNED_IN' && session?.user) {
-        // Check if user has a profile in the database
-        const { data: profile } = await supabase
-          .from('Profile')
-          .select('userId')
-          .eq('userId', session.user.id)
-          .single();
-
-        // If no profile exists, this is a new user
-        setIsNewUser(!profile);
+        try {
+          // Check if user has a profile via API
+          const profile = await api.auth.getProfile();
+          setIsNewUser(!profile);
+        } catch (error) {
+          // If profile not found, this is a new user
+          setIsNewUser(true);
+        }
       } else if (event === 'SIGNED_OUT') {
         setIsNewUser(false);
       }

@@ -7,50 +7,42 @@ import { Label } from './ui/label';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
-interface SignUpProps {
+interface SignInProps {
   onNavigate: (screen: string) => void;
 }
 
-export default function SignUp({ onNavigate }: SignUpProps) {
+export default function SignIn({ onNavigate }: SignInProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { signInWithGoogle } = useAuth();
 
-  const handleEmailSignUp = async (e: React.FormEvent) => {
+  const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      setLoading(false);
-      return;
-    }
+    try {
+      // Sign in with Supabase
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
-      setLoading(false);
-      return;
-    }
+      if (error) throw error;
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (error) {
-      setError(error.message);
+      // Navigation will be handled by AuthContext
+      onNavigate('dashboard');
+    } catch (error) {
+      console.error('Signin error:', error);
+      setError(error instanceof Error ? error.message : 'Invalid email or password');
+    } finally {
       setLoading(false);
-    } else {
-      // After successful signup, go to signup flow for additional info
-      onNavigate('signup-flow');
     }
   };
 
-  const handleGoogleSignUp = async () => {
+  const handleGoogleSignIn = async () => {
     setLoading(true);
     setError(null);
 
@@ -88,7 +80,7 @@ export default function SignUp({ onNavigate }: SignUpProps) {
         ))}
       </div>
 
-      {/* Sign up form */}
+      {/* Sign in form */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -99,7 +91,7 @@ export default function SignUp({ onNavigate }: SignUpProps) {
             <Logo size={80} />
           </div>
 
-          <h1 className="text-white text-center mb-8">Sign Up</h1>
+          <h1 className="text-white text-center mb-8">Sign In</h1>
 
           {error && (
             <div className="bg-red-500/20 border-2 border-red-500/50 rounded-lg p-3 mb-4">
@@ -107,7 +99,7 @@ export default function SignUp({ onNavigate }: SignUpProps) {
             </div>
           )}
 
-          <form onSubmit={handleEmailSignUp} className="space-y-6">
+          <form onSubmit={handleEmailSignIn} className="space-y-6">
             <div>
               <Label htmlFor="email" className="text-white mb-2 block">Email</Label>
               <Input
@@ -134,25 +126,12 @@ export default function SignUp({ onNavigate }: SignUpProps) {
               />
             </div>
 
-            <div>
-              <Label htmlFor="confirmPassword" className="text-white mb-2 block">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="bg-white/20 border-white/40 text-white placeholder:text-white/60"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-
             <Button
               type="submit"
               className="w-full bg-white text-[#4962bf] hover:bg-white/90"
               disabled={loading}
             >
-              {loading ? 'Creating account...' : 'Sign Up'}
+              {loading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
 
@@ -167,7 +146,7 @@ export default function SignUp({ onNavigate }: SignUpProps) {
 
           <Button
             type="button"
-            onClick={handleGoogleSignUp}
+            onClick={handleGoogleSignIn}
             className="w-full bg-white text-[#4962bf] hover:bg-white/90 flex items-center justify-center gap-2"
             disabled={loading}
           >
@@ -189,16 +168,16 @@ export default function SignUp({ onNavigate }: SignUpProps) {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            {loading ? 'Signing up...' : 'Sign up with Google'}
+            {loading ? 'Signing in...' : 'Sign in with Google'}
           </Button>
 
           <div className="mt-6 text-center">
-            <p className="text-white/80">Already have an account?</p>
+            <p className="text-white/80">Don't have an account?</p>
             <button
-              onClick={() => onNavigate('signin')}
+              onClick={() => onNavigate('signup')}
               className="text-white underline hover:text-white/80 mt-2"
             >
-              Sign In
+              Sign Up
             </button>
           </div>
         </div>
