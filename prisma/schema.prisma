@@ -17,12 +17,6 @@ datasource db {
 
 //// Enums ///////////////////////////////////////////////////////////////
 
-enum ScoreBand {
-  BAND_660_699
-  BAND_700_749
-  BAND_750_PLUS
-}
-
 enum RewardType {
   CASHBACK
   TRAVEL
@@ -118,7 +112,7 @@ model Profile {
 
 model UserPrefs {
   userId             String         @id @db.Uuid
-  scoreBand          ScoreBand
+  creditScore        Int            @default(0)
   creditHistoryYears Int            @default(0)
   maxActiveCards     Int            @default(2)
   annualFeeCapCents  Int            @default(0)
@@ -167,7 +161,7 @@ model CardsCatalog {
   isChargeCard    Boolean     @default(false)
   annualFeeCents  Int         @default(0)
   feeCreditsCents Int         @default(0)
-  minScoreBand    ScoreBand?
+  minCreditScore  Int?        @default(0)
   valuationCpp    Decimal?    @db.Decimal(6, 3)
   active          Boolean     @default(true)
 
