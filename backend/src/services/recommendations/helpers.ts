@@ -301,6 +301,52 @@ function calculateRegularCashback(
 }
 
 /**
+ * Calculate 2-year cashback for Citi Custom Cash
+ * Special handling: 5% on top spending category (up to $500/month), 1% on everything else
+ */
+function calculateCitiCustomCashback(
+  card: CardWithDetails,
+  yearlySpendingByCategory: Partial<Record<Category, number>>,
+  rewardType: RewardType | null
+): number {
+  let twoYearCashback = 0;
+
+  // Find the top spending category
+  let topCategory: string | null = null;
+  let topSpending = 0;
+
+  for (const [category, yearlySpending] of Object.entries(yearlySpendingByCategory)) {
+    if (yearlySpending && yearlySpending > topSpending) {
+      topSpending = yearlySpending;
+      topCategory = category;
+    }
+  }
+
+  // Calculate cashback for each category
+  for (const [category, yearlySpending] of Object.entries(yearlySpendingByCategory)) {
+    if (!yearlySpending) continue;
+
+    if (category === topCategory) {
+      // Top category gets 5% up to $500/month = $6,000/year
+      const maxBonusSpendingPerYear = 50000 * 12; // $500/month × 12 months = $6,000/year
+      const cappedYearlySpending = Math.min(yearlySpending, maxBonusSpendingPerYear);
+      const excessYearlySpending = Math.max(0, yearlySpending - maxBonusSpendingPerYear);
+
+      // Apply 5% to capped spending
+      twoYearCashback += cappedYearlySpending * 0.05 * 2;
+
+      // Apply 1% to excess spending
+      twoYearCashback += excessYearlySpending * 0.01 * 2;
+    } else {
+      // All other categories get 1%
+      twoYearCashback += yearlySpending * 0.01 * 2;
+    }
+  }
+
+  return twoYearCashback;
+}
+
+/**
  * Calculate 2-year cashback value from earn rates
  * Routes to rotating or regular calculation based on card type
  */
@@ -309,6 +355,11 @@ export function calculateTwoYearCashback(
   yearlySpendingByCategory: Partial<Record<Category, number>>,
   rewardType: RewardType | null
 ): number {
+  // Special handling for Citi Custom Cash
+  if (card.name.includes('Custom Cash') && card.issuer === 'Citi') {
+    return calculateCitiCustomCashback(card, yearlySpendingByCategory, rewardType);
+  }
+
   // Check if card has rotating categories
   if (card.rotating && card.rotating.length > 0) {
     return calculateRotatingCashback(card, yearlySpendingByCategory, rewardType);
