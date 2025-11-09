@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { execSync } from 'child_process';
 import authRoutes from './routes/auth.routes';
+import recommendationsRoutes from './routes/recommendations.routes';
 import plaidRoutes from './routes/plaid.routes';
 
 // Load environment variables from backend .env file
@@ -42,6 +43,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/recommendations', recommendationsRoutes);
 app.use('/api/plaid', plaidRoutes);
 
 // Health check
