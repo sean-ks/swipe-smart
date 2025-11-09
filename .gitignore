@@ -6,3 +6,5 @@ node_modules
 
 # Vite
 .vite
+
+.DS_Store

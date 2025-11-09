@@ -6,9 +6,11 @@ import SignUpFlow from './components/SignUpFlow';
 import Dashboard from './components/Dashboard';
 import CreditRoute from './components/CreditRoute';
 import Explore from './components/Explore';
+import { ConnectedBanks } from './components/ConnectedBanks';
+import { Button } from './components/ui/button';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
-type Screen = 'loading' | 'signin' | 'signup' | 'signup-flow' | 'dashboard' | 'credit-route' | 'explore';
+type Screen = 'loading' | 'signin' | 'signup' | 'signup-flow' | 'dashboard' | 'credit-route' | 'explore' | 'connected-banks';
 
 function AppContent() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('loading');
@@ -51,6 +53,21 @@ function AppContent() {
         return <CreditRoute onNavigate={setCurrentScreen} />;
       case 'explore':
         return <Explore onNavigate={setCurrentScreen} />;
+      case 'connected-banks':
+        return (
+          <div className="min-h-screen bg-[#4962bf] p-6">
+            <div className="max-w-6xl mx-auto">
+              <Button
+                onClick={() => setCurrentScreen('dashboard')}
+                variant="outline"
+                className="mb-4 bg-white/20 border-white/40 text-white hover:bg-white/30"
+              >
+                ← Back to Dashboard
+              </Button>
+              <ConnectedBanks />
+            </div>
+          </div>
+        );
       default:
         return <SignIn onNavigate={setCurrentScreen} />;
     }
