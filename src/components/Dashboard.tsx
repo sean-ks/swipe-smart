@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Logo from "./Logo";
 import PixelCard from "./PixelCard";
@@ -34,21 +34,59 @@ import {
   Mail,
   Crown,
   TrendingUp,
+  LogOut,
 } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import { supabase } from "../lib/supabase";
 
 interface DashboardProps {
   onNavigate: (screen: string) => void;
 }
 
+interface UserProfile {
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  creditScore: number | null;
+}
+
 export default function Dashboard({
   onNavigate,
 }: DashboardProps) {
+  const { signOut, user } = useAuth();
   const [showIdeasModal, setShowIdeasModal] = useState(false);
   const [showApplicationDialog, setShowApplicationDialog] =
     useState(false);
   const [showPendingCard, setShowPendingCard] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
   const [selectedCard, setSelectedCard] = useState<typeof inventory[0] | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  // Fetch user profile data
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('Profile')
+        .select('firstName, lastName, phone, creditScore')
+        .eq('userId', user.id)
+        .single();
+
+      if (data && !error) {
+        setUserProfile(data);
+      }
+      setProfileLoading(false);
+    };
+
+    fetchUserProfile();
+  }, [user]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    onNavigate('signin');
+  };
 
   const [currentGoal, setCurrentGoal] = useState({
     name: "Chase Sapphire Preferred",
@@ -271,7 +309,14 @@ export default function Dashboard({
             <UserProfileCard
               level={5}
               xp={180}
-              userName="John Doe"
+              userName={
+                userProfile && (userProfile.firstName || userProfile.lastName)
+                  ? `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim()
+                  : user?.email?.split('@')[0] || 'User'
+              }
+              userEmail={user?.email || ''}
+              userPhone={userProfile?.phone || ''}
+              userId={user?.id || ''}
             />
           </div>
           <div className="flex gap-4">
@@ -288,6 +333,13 @@ export default function Dashboard({
             >
               <Compass className="w-4 h-4 mr-2" />
               Explore
+            </Button>
+            <Button
+              onClick={handleSignOut}
+              className="bg-red-500/20 border-2 border-red-400/40 text-white hover:bg-red-500/30 backdrop-blur-sm"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
             </Button>
           </div>
         </div>

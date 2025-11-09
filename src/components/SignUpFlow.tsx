@@ -6,6 +6,8 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { ArrowLeft, ArrowRight, CreditCard } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 
 interface SignUpFlowProps {
   onNavigate: (screen: string) => void;
@@ -13,6 +15,10 @@ interface SignUpFlowProps {
 
 export default function SignUpFlow({ onNavigate }: SignUpFlowProps) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -20,15 +26,61 @@ export default function SignUpFlow({ onNavigate }: SignUpFlowProps) {
     phone: '',
     knowsCreditScore: '',
     creditScore: '',
+    travelGoal: '',
+    diningGoal: '',
+    buildCreditGoal: '',
+    cashbackGoal: '',
+    onlineShoppingGoal: '',
   });
 
   const totalSteps = 4;
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
-      onNavigate('dashboard');
+      // Save all profile data to Supabase
+      await saveProfileData();
+    }
+  };
+
+  const saveProfileData = async () => {
+    if (!user) {
+      setError('No user found. Please sign in again.');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { error: updateError } = await supabase
+        .from('Profile')
+        .update({
+          firstName: formData.firstName || null,
+          lastName: formData.lastName || null,
+          phone: formData.phone || null,
+          creditHistoryAge: formData.creditHistoryAge || null,
+          creditScore: formData.creditScore ? parseInt(formData.creditScore) : null,
+          knowsCreditScore: formData.knowsCreditScore === 'yes',
+          travelGoal: formData.travelGoal || null,
+          diningGoal: formData.diningGoal || null,
+          buildCreditGoal: formData.buildCreditGoal || null,
+          cashbackGoal: formData.cashbackGoal || null,
+          onlineShoppingGoal: formData.onlineShoppingGoal || null,
+          updatedAt: new Date().toISOString(),
+        })
+        .eq('userId', user.id);
+
+      if (updateError) {
+        setError(updateError.message);
+        setLoading(false);
+      } else {
+        onNavigate('dashboard');
+      }
+    } catch (err) {
+      setError('Failed to save profile data');
+      setLoading(false);
     }
   };
 
@@ -259,37 +311,127 @@ export default function SignUpFlow({ onNavigate }: SignUpFlowProps) {
                 className="space-y-6"
               >
                 <h2 className="text-white mb-6">Future Goals</h2>
-                
+
                 <p className="text-white/80 mb-6">
                   Tell us about your financial aspirations to get personalized recommendations:
                 </p>
 
+                {error && (
+                  <div className="bg-red-500/20 border-2 border-red-500/50 rounded-lg p-3 mb-4">
+                    <p className="text-white text-sm text-center">{error}</p>
+                  </div>
+                )}
+
                 <div className="space-y-4">
-                  {[
-                    'Would you like to travel more?',
-                    'Do you see yourself spending more on food & dining?',
-                    'Do you want to build credit for a loan?',
-                    'Are you interested in cashback rewards?',
-                    'Do you frequently shop online?',
-                  ].map((question) => (
-                    <div key={question} className="bg-white/10 p-4 rounded-lg border-2 border-white/20">
-                      <Label className="text-white mb-3 block">{question}</Label>
-                      <RadioGroup className="flex gap-4">
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="yes" id={`${question}-yes`} className="border-white text-white" />
-                          <Label htmlFor={`${question}-yes`} className="text-white cursor-pointer">Yes</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="no" id={`${question}-no`} className="border-white text-white" />
-                          <Label htmlFor={`${question}-no`} className="text-white cursor-pointer">No</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="maybe" id={`${question}-maybe`} className="border-white text-white" />
-                          <Label htmlFor={`${question}-maybe`} className="text-white cursor-pointer">Maybe</Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-                  ))}
+                  <div className="bg-white/10 p-4 rounded-lg border-2 border-white/20">
+                    <Label className="text-white mb-3 block">Would you like to travel more?</Label>
+                    <RadioGroup
+                      value={formData.travelGoal}
+                      onValueChange={(value) => updateFormData('travelGoal', value)}
+                      className="flex gap-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="yes" id="travel-yes" className="border-white text-white" />
+                        <Label htmlFor="travel-yes" className="text-white cursor-pointer">Yes</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="no" id="travel-no" className="border-white text-white" />
+                        <Label htmlFor="travel-no" className="text-white cursor-pointer">No</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="maybe" id="travel-maybe" className="border-white text-white" />
+                        <Label htmlFor="travel-maybe" className="text-white cursor-pointer">Maybe</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  <div className="bg-white/10 p-4 rounded-lg border-2 border-white/20">
+                    <Label className="text-white mb-3 block">Do you see yourself spending more on food & dining?</Label>
+                    <RadioGroup
+                      value={formData.diningGoal}
+                      onValueChange={(value) => updateFormData('diningGoal', value)}
+                      className="flex gap-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="yes" id="dining-yes" className="border-white text-white" />
+                        <Label htmlFor="dining-yes" className="text-white cursor-pointer">Yes</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="no" id="dining-no" className="border-white text-white" />
+                        <Label htmlFor="dining-no" className="text-white cursor-pointer">No</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="maybe" id="dining-maybe" className="border-white text-white" />
+                        <Label htmlFor="dining-maybe" className="text-white cursor-pointer">Maybe</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  <div className="bg-white/10 p-4 rounded-lg border-2 border-white/20">
+                    <Label className="text-white mb-3 block">Do you want to build credit for a loan?</Label>
+                    <RadioGroup
+                      value={formData.buildCreditGoal}
+                      onValueChange={(value) => updateFormData('buildCreditGoal', value)}
+                      className="flex gap-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="yes" id="credit-yes" className="border-white text-white" />
+                        <Label htmlFor="credit-yes" className="text-white cursor-pointer">Yes</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="no" id="credit-no" className="border-white text-white" />
+                        <Label htmlFor="credit-no" className="text-white cursor-pointer">No</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="maybe" id="credit-maybe" className="border-white text-white" />
+                        <Label htmlFor="credit-maybe" className="text-white cursor-pointer">Maybe</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  <div className="bg-white/10 p-4 rounded-lg border-2 border-white/20">
+                    <Label className="text-white mb-3 block">Are you interested in cashback rewards?</Label>
+                    <RadioGroup
+                      value={formData.cashbackGoal}
+                      onValueChange={(value) => updateFormData('cashbackGoal', value)}
+                      className="flex gap-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="yes" id="cashback-yes" className="border-white text-white" />
+                        <Label htmlFor="cashback-yes" className="text-white cursor-pointer">Yes</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="no" id="cashback-no" className="border-white text-white" />
+                        <Label htmlFor="cashback-no" className="text-white cursor-pointer">No</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="maybe" id="cashback-maybe" className="border-white text-white" />
+                        <Label htmlFor="cashback-maybe" className="text-white cursor-pointer">Maybe</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  <div className="bg-white/10 p-4 rounded-lg border-2 border-white/20">
+                    <Label className="text-white mb-3 block">Do you frequently shop online?</Label>
+                    <RadioGroup
+                      value={formData.onlineShoppingGoal}
+                      onValueChange={(value) => updateFormData('onlineShoppingGoal', value)}
+                      className="flex gap-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="yes" id="online-yes" className="border-white text-white" />
+                        <Label htmlFor="online-yes" className="text-white cursor-pointer">Yes</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="no" id="online-no" className="border-white text-white" />
+                        <Label htmlFor="online-no" className="text-white cursor-pointer">No</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="maybe" id="online-maybe" className="border-white text-white" />
+                        <Label htmlFor="online-maybe" className="text-white cursor-pointer">Maybe</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -299,7 +441,7 @@ export default function SignUpFlow({ onNavigate }: SignUpFlowProps) {
           <div className="flex justify-between mt-8">
             <Button
               onClick={handleBack}
-              disabled={currentStep === 1}
+              disabled={currentStep === 1 || loading}
               variant="outline"
               className="bg-white/20 border-white/40 text-white hover:bg-white/30"
             >
@@ -308,10 +450,11 @@ export default function SignUpFlow({ onNavigate }: SignUpFlowProps) {
             </Button>
             <Button
               onClick={handleNext}
+              disabled={loading}
               className="bg-white text-[#4962bf] hover:bg-white/90"
             >
-              {currentStep === totalSteps ? 'Finish' : 'Next'}
-              {currentStep < totalSteps && <ArrowRight className="w-4 h-4 ml-2" />}
+              {loading ? 'Saving...' : currentStep === totalSteps ? 'Finish' : 'Next'}
+              {currentStep < totalSteps && !loading && <ArrowRight className="w-4 h-4 ml-2" />}
             </Button>
           </div>
         </div>

@@ -88,6 +88,21 @@ model Profile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // User information
+  firstName          String?
+  lastName           String?
+  phone              String?
+  creditHistoryAge   String?
+  creditScore        Int?
+  knowsCreditScore   Boolean?
+
+  // Financial goals
+  travelGoal         String? // yes/no/maybe
+  diningGoal         String?
+  buildCreditGoal    String?
+  cashbackGoal       String?
+  onlineShoppingGoal String?
+
   prefs                  UserPrefs?
   userCards              UserCard[]
   userMerchants          UserMerchant[]

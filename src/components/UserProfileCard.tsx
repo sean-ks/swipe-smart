@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Input } from './ui/input';
@@ -6,19 +6,82 @@ import { Label } from './ui/label';
 import { Switch } from './ui/switch';
 import { Button } from './ui/button';
 import { Settings, Zap } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface UserProfileCardProps {
   level: number;
   xp: number;
   userName?: string;
+  userEmail?: string;
+  userPhone?: string;
+  userId?: string;
 }
 
-export default function UserProfileCard({ level, xp, userName = 'John Doe' }: UserProfileCardProps) {
+export default function UserProfileCard({
+  level,
+  xp,
+  userName = 'User',
+  userEmail = '',
+  userPhone = '',
+  userId = ''
+}: UserProfileCardProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [name, setName] = useState(userName);
-  const [email, setEmail] = useState('john@example.com');
-  const [phone, setPhone] = useState('(555) 123-4567');
+  const [email, setEmail] = useState(userEmail);
+  const [phone, setPhone] = useState(userPhone);
   const [notifications, setNotifications] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  // Update local state when props change
+  useEffect(() => {
+    setName(userName);
+    setEmail(userEmail);
+    setPhone(userPhone);
+  }, [userName, userEmail, userPhone]);
+
+  const handleSaveChanges = async () => {
+    if (!userId) {
+      setError('User ID not found');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    try {
+      // Parse the full name into firstName and lastName
+      const nameParts = name.trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      const { error: updateError } = await supabase
+        .from('Profile')
+        .update({
+          firstName,
+          lastName,
+          phone: phone || null,
+          updatedAt: new Date().toISOString(),
+        })
+        .eq('userId', userId);
+
+      if (updateError) {
+        setError(updateError.message);
+      } else {
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+          setShowSettings(false);
+        }, 2000);
+      }
+    } catch (err) {
+      setError('Failed to save changes');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Unlock different borders and colors based on level
   const getLevelStyle = (level: number) => {
@@ -120,6 +183,18 @@ export default function UserProfileCard({ level, xp, userName = 'John Doe' }: Us
           </DialogHeader>
           
           <div className="space-y-4 mt-4">
+            {error && (
+              <div className="bg-red-500/20 border-2 border-red-500/50 rounded-lg p-3">
+                <p className="text-white text-sm text-center">{error}</p>
+              </div>
+            )}
+
+            {success && (
+              <div className="bg-green-500/20 border-2 border-green-500/50 rounded-lg p-3">
+                <p className="text-white text-sm text-center">Changes saved successfully!</p>
+              </div>
+            )}
+
             <div>
               <Label htmlFor="name" className="text-white mb-2 block">Name</Label>
               <Input
@@ -127,17 +202,18 @@ export default function UserProfileCard({ level, xp, userName = 'John Doe' }: Us
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="bg-white/20 border-white/40 text-white placeholder:text-white/60"
+                disabled={loading}
               />
             </div>
 
             <div>
-              <Label htmlFor="email" className="text-white mb-2 block">Email</Label>
+              <Label htmlFor="email" className="text-white mb-2 block">Email (Read-only)</Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-white/20 border-white/40 text-white placeholder:text-white/60"
+                disabled
+                className="bg-white/10 border-white/30 text-white/60 cursor-not-allowed"
               />
             </div>
 
@@ -149,6 +225,7 @@ export default function UserProfileCard({ level, xp, userName = 'John Doe' }: Us
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="bg-white/20 border-white/40 text-white placeholder:text-white/60"
+                disabled={loading}
               />
             </div>
 
@@ -158,11 +235,16 @@ export default function UserProfileCard({ level, xp, userName = 'John Doe' }: Us
                 id="notifications"
                 checked={notifications}
                 onCheckedChange={setNotifications}
+                disabled={loading}
               />
             </div>
 
-            <Button className="w-full bg-white text-[#4962bf] hover:bg-white/90">
-              Save Changes
+            <Button
+              onClick={handleSaveChanges}
+              disabled={loading}
+              className="w-full bg-white text-[#4962bf] hover:bg-white/90"
+            >
+              {loading ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
         </DialogContent>

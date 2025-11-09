@@ -6,19 +6,34 @@ import SignUpFlow from './components/SignUpFlow';
 import Dashboard from './components/Dashboard';
 import CreditRoute from './components/CreditRoute';
 import Explore from './components/Explore';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 type Screen = 'loading' | 'signin' | 'signup' | 'signup-flow' | 'dashboard' | 'credit-route' | 'explore';
 
-export default function App() {
+function AppContent() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('loading');
+  const { user, loading: authLoading, isNewUser } = useAuth();
 
   useEffect(() => {
-    // Simulate loading time
-    const timer = setTimeout(() => {
-      setCurrentScreen('signin');
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
+    // Wait for auth to load, then check if user is authenticated
+    if (!authLoading) {
+      if (user) {
+        // If user just signed in and is new, route to signup flow
+        if (isNewUser) {
+          setCurrentScreen('signup-flow');
+        } else {
+          setCurrentScreen('dashboard');
+        }
+      } else {
+        setCurrentScreen('signin');
+      }
+    }
+  }, [user, authLoading, isNewUser]);
+
+  // Show loading screen while checking auth
+  if (authLoading || currentScreen === 'loading') {
+    return <LoadingScreen />;
+  }
 
   const renderScreen = () => {
     switch (currentScreen) {
@@ -45,5 +60,13 @@ export default function App() {
     <div className="min-h-screen bg-[#4962bf]">
       {renderScreen()}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
