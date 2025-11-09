@@ -38,12 +38,6 @@ enum CardNetwork {
   DISCOVER
 }
 
-enum SwitchJobStatus {
-  pending
-  running
-  done
-  failed
-}
 
 enum SwitchEventStatus {
   queued
@@ -56,14 +50,6 @@ enum AuditArtifactType {
   CSV
   JSON
   PDF
-}
-
-enum BonusKind {
-  WELCOME
-  UPGRADE
-  REFERRAL
-  TARGETED
-  OTHER
 }
 
 enum ForeignTxnType {
@@ -79,7 +65,7 @@ model Profile {
   firstName              String?
   lastName               String?
   phone                  String?
-  creditHistoryAge       String?
+  creditHistoryAge       Int                      @default(0)
   creditScore            Int?
   knowsCreditScore       Boolean?
   travelGoal             String?
@@ -101,22 +87,13 @@ model Profile {
 }
 
 model UserPrefs {
-  userId             String         @id @db.Uuid
-  creditScore        Int            @default(0)
-  creditHistoryYears Int            @default(0)
-  maxActiveCards     Int            @default(2)
-  annualFeeCapCents  Int            @default(0)
-  preference         RewardType @default(CASHBACK)
-  allowAnnualFees    Boolean        @default(true)
-
-  user Profile @relation(fields: [userId], references: [userId], onDelete: Cascade)
   userId             String     @id @db.Uuid
+  creditScore        Int        @default(0)
   creditHistoryYears Int        @default(0)
   maxActiveCards     Int        @default(2)
   annualFeeCapCents  Int        @default(0)
   preference         RewardType @default(CASHBACK)
   allowAnnualFees    Boolean    @default(true)
-  creditScore        Int        @default(0)
   user               Profile    @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
@@ -145,32 +122,6 @@ model MerchantProfileMonthly {
 }
 
 model CardsCatalog {
-  id              String      @id @default(uuid())
-  name            String
-  issuer          String
-  network         CardNetwork
-  RewardType      RewardType?
-  isChargeCard    Boolean     @default(false)
-  isTestCard      Boolean     @default(false)
-  annualFeeCents  Int         @default(0)
-  feeCreditsCents Int         @default(0)
-  minCreditScore  Int?        @default(0)
-  valuationCpp    Decimal?    @db.Decimal(6, 3)
-  active          Boolean     @default(true)
-
-  // NEW provenance / metadata
-  currencyProgram String?
-  sourceUrl       String?
-  termsUrl        String?
-  lastVerifiedAt  DateTime?
-  cardMetadata    Json?
-
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-
-  earnRates        CardEarnRate[]
-  bonuses          CardBonus[]
-  pacing           CardPacing?
   id               String                  @id @default(uuid())
   name             String
   issuer           String
@@ -532,51 +483,11 @@ model PlaidTransaction {
   @@index([merchantName])
 }
 
-enum RewardType {
-  CASHBACK
-  TRAVEL
-  MISCELLANEOUS
-}
-
-enum Category {
-  groceries
-  dining
-  gas
-  transit
-  travel
-  online
-  general
-  utilities
-  streaming
-  drugstore
-  entertainment
-}
-
-enum CardNetwork {
-  VISA
-  MASTERCARD
-  AMEX
-  DISCOVER
-}
-
 enum SwitchJobStatus {
   pending
   running
   done
   failed
-}
-
-enum SwitchEventStatus {
-  queued
-  in_progress
-  updated
-  error
-}
-
-enum AuditArtifactType {
-  CSV
-  JSON
-  PDF
 }
 
 enum BonusKind {
@@ -585,11 +496,6 @@ enum BonusKind {
   REFERRAL
   TARGETED
   OTHER
-}
-
-enum ForeignTxnType {
-  NONE
-  PERCENT
 }
 
 enum PlaidItemStatus {
