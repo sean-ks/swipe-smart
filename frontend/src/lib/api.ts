@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 
-const API_BASE = 'http://localhost:5001/api';
+const API_BASE = '/api';
 
 export interface CompleteProfileData {
   id: string;
