@@ -749,9 +749,9 @@ cards:
   issuer: American Express
   network: AMEX
   isChargeCard: false
-  annualFeeCents: null
+  annualFeeCents: 0 
   feeCredits:
-    totalAnnualCreditsCents: null
+    totalAnnualCreditsCents: 0 
     items: []
   minScoreBand: null
   valuationCpp: null
@@ -1275,223 +1275,720 @@ cards:
   issuer: Citi
   network: MASTERCARD
   isChargeCard: false
-  annualFeeCents: null
+  annualFeeCents: 0
   feeCredits:
-    totalAnnualCreditsCents: null
+    totalAnnualCreditsCents: 0
     items: []
-  minScoreBand: null
-  valuationCpp: null
+  minScoreBand: BAND_660_699
+  valuationCpp: 1.0
   active: true
   rewards:
-    baseRatePct: null
-    earnRates: []
-  bonuses: []
+    baseRatePct: 0.01
+    earnRates:
+    - category: dining
+      ratePct: 0.05
+      cap:
+        amountCents: 50000
+        windowMonths: 1
+      note: 5% back on top eligible category (shared $500 cap per billing cycle)
+    - category: groceries
+      ratePct: 0.05
+      cap:
+        amountCents: 50000
+        windowMonths: 1
+      note: Included in rotating “top eligible” list
+    - category: gas
+      ratePct: 0.05
+      cap:
+        amountCents: 50000
+        windowMonths: 1
+      note: Eligible for 5% when it is the top monthly category
+    - category: transit
+      ratePct: 0.05
+      cap:
+        amountCents: 50000
+        windowMonths: 1
+      note: Includes rideshare, parking, and toll purchases
+    - category: streaming
+      ratePct: 0.05
+      cap:
+        amountCents: 50000
+        windowMonths: 1
+      note: Popular streaming services qualify
+    - category: drugstore
+      ratePct: 0.05
+      cap:
+        amountCents: 50000
+        windowMonths: 1
+      note: Eligible when it is your top category
+  bonuses:
+  - kind: welcome
+    points: 20000
+    cashCents: null
+    windowMonths: 6
+    minSpendCents: 150000
+    expirationText: As advertised November 2024
+    footnotes:
+    - Earn 20,000 ThankYou Points after $1,500 spent in 6 months (issuer offer, Nov
+      2024).
   pacing:
     minDaysBetweenNewCards: 90
-  apr: {}
-  fees: {}
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 20.24
+        max: 29.99
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 20.24
+        max: 29.99
+      introOffer:
+        introPct: 0.0
+        introMonths: 15
+        fee:
+          pct: 0.05
+          minCents: 500
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: percent
+      pct: 0.03
+    balanceTransferFee:
+      pct: 0.05
+      minCents: 500
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
   eligibility:
-    suggestedHistoryYears: null
-    utilizationNote: null
-    otherNotes: []
-  benefits: []
+    suggestedHistoryYears: 2
+    utilizationNote: Good credit recommended; restricted by Citi application rules
+    otherNotes:
+    - One Custom Cash allowed per user.
+  benefits:
+  - Automatically optimizes 5% cashback to the highest eligible category each billing
+    cycle
+  - Citi Entertainment presale and exclusive event access
+  - $0 liability on unauthorized charges
   cashbackTable:
-    rows: []
+    rows:
+    - category: dining
+      ratePct: 0.05
+    - category: groceries
+      ratePct: 0.05
+    - category: gas
+      ratePct: 0.05
+    - category: transit
+      ratePct: 0.05
+    - category: streaming
+      ratePct: 0.05
+    - category: general
+      ratePct: 0.01
   scraping:
-    source: null
-    sourceUrl: null
-    termsUrl: null
-    lastVerifiedAt: null
-    evidence: []
+    source: issuer
+    sourceUrl: https://www.citi.com/credit-cards/citi-custom-cash-card
+    termsUrl: https://www.citi.com/credit-cards/citi-custom-cash-card/terms
+    lastVerifiedAt: '2025-11-08'
+    evidence:
+    - Citi Custom Cash Card – rates & rewards grid (accessed Nov 2025)
 - name: Wells Fargo Autograph
   issuer: Wells Fargo
   network: VISA
   isChargeCard: false
-  annualFeeCents: null
+  annualFeeCents: 0
   feeCredits:
-    totalAnnualCreditsCents: null
+    totalAnnualCreditsCents: 0
     items: []
-  minScoreBand: null
-  valuationCpp: null
+  minScoreBand: BAND_660_699
+  valuationCpp: 1.0
   active: true
   rewards:
-    baseRatePct: null
-    earnRates: []
-  bonuses: []
+    baseRatePct: 0.01
+    earnRates:
+    - category: travel
+      ratePct: 0.03
+      note: Includes flights, hotels, car rentals, and transit booked directly
+    - category: dining
+      ratePct: 0.03
+      note: Restaurants, bars, delivery services
+    - category: gas
+      ratePct: 0.03
+      note: Gas stations and EV charging
+    - category: transit
+      ratePct: 0.03
+      note: Rideshare, parking, tolls, and mass transit
+    - category: streaming
+      ratePct: 0.03
+      note: Popular streaming services
+    - category: utilities
+      ratePct: 0.03
+      note: Eligible phone plans (Autograph card benefit)
+  bonuses:
+  - kind: welcome
+    points: 30000
+    cashCents: null
+    windowMonths: 3
+    minSpendCents: 150000
+    expirationText: Offer as advertised November 2024
+    footnotes:
+    - Earn 30,000 bonus points after $1,500 in purchases in the first 3 months (Wells
+      Fargo Autograph offer, Nov 2024).
   pacing:
     minDaysBetweenNewCards: 90
-  apr: {}
-  fees: {}
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 20.24
+        max: 29.99
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 20.24
+        max: 29.99
+      introOffer:
+        introPct: 0.0
+        introMonths: 12
+        fee:
+          pct: 0.03
+          minCents: 500
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0.03
+      minCents: 500
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
   eligibility:
-    suggestedHistoryYears: null
-    utilizationNote: null
-    otherNotes: []
-  benefits: []
+    suggestedHistoryYears: 2
+    utilizationNote: Good credit required; Wells Fargo internal rules apply
+    otherNotes:
+    - 1 welcome bonus per 24 months across Wells Fargo consumer cards.
+  benefits:
+  - Cell phone protection when paying the monthly bill with the card
+  - No foreign transaction fees
+  - Visa Signature travel and dining protections
   cashbackTable:
-    rows: []
+    rows:
+    - category: travel
+      ratePct: 0.03
+    - category: dining
+      ratePct: 0.03
+    - category: gas
+      ratePct: 0.03
+    - category: transit
+      ratePct: 0.03
+    - category: streaming
+      ratePct: 0.03
+    - category: general
+      ratePct: 0.01
   scraping:
-    source: null
-    sourceUrl: null
-    termsUrl: null
-    lastVerifiedAt: null
-    evidence: []
+    source: issuer
+    sourceUrl: https://www.wellsfargo.com/credit-cards/autograph-card/
+    termsUrl: https://www.wellsfargo.com/credit-cards/autograph-card/terms/
+    lastVerifiedAt: '2025-11-08'
+    evidence:
+    - Wells Fargo Autograph Card benefits & rates page (accessed Nov 2025)
 - name: Wells Fargo Active Cash
   issuer: Wells Fargo
   network: VISA
   isChargeCard: false
-  annualFeeCents: null
+  annualFeeCents: 0
   feeCredits:
-    totalAnnualCreditsCents: null
+    totalAnnualCreditsCents: 0
     items: []
-  minScoreBand: null
-  valuationCpp: null
+  minScoreBand: BAND_660_699
+  valuationCpp: 1.0
   active: true
   rewards:
-    baseRatePct: null
+    baseRatePct: 0.02
     earnRates: []
-  bonuses: []
+  bonuses:
+  - kind: welcome
+    points: null
+    cashCents: 20000
+    windowMonths: 3
+    minSpendCents: 50000
+    expirationText: 2% cash rewards bonus (Nov 2024 offer)
+    footnotes:
+    - Earn a $200 cash rewards bonus after $500 in purchases within 3 months (Active
+      Cash offer, Nov 2024).
   pacing:
     minDaysBetweenNewCards: 90
-  apr: {}
-  fees: {}
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 20.24
+        max: 29.99
+      index: Prime
+      introOffer:
+        introPct: 0.0
+        introMonths: 15
+    balanceTransferAPR:
+      rangePct:
+        min: 20.24
+        max: 29.99
+      introOffer:
+        introPct: 0.0
+        introMonths: 15
+        fee:
+          pct: 0.03
+          minCents: 500
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: percent
+      pct: 0.03
+    balanceTransferFee:
+      pct: 0.03
+      minCents: 500
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
   eligibility:
-    suggestedHistoryYears: null
-    utilizationNote: null
+    suggestedHistoryYears: 2
+    utilizationNote: Wells Fargo may limit bonuses to once every 15 months
     otherNotes: []
-  benefits: []
+  benefits:
+  - Unlimited 2% cash rewards on purchases
+  - Cell phone protection when paying the bill with the card
+  - Visa Signature benefits (auto rental collision damage waiver, travel & emergency
+    assistance)
   cashbackTable:
-    rows: []
+    rows:
+    - category: general
+      ratePct: 0.02
   scraping:
-    source: null
-    sourceUrl: null
-    termsUrl: null
-    lastVerifiedAt: null
-    evidence: []
+    source: issuer
+    sourceUrl: https://www.wellsfargo.com/credit-cards/active-cash-card/
+    termsUrl: https://www.wellsfargo.com/credit-cards/active-cash-card/terms/
+    lastVerifiedAt: '2025-11-08'
+    evidence:
+    - Wells Fargo Active Cash card offer (Nov 2025)
 - name: Bilt Mastercard
   issuer: Wells Fargo
   network: MASTERCARD
   isChargeCard: false
-  annualFeeCents: null
+  annualFeeCents: 0
   feeCredits:
-    totalAnnualCreditsCents: null
+    totalAnnualCreditsCents: 0
     items: []
-  minScoreBand: null
-  valuationCpp: null
+  minScoreBand: BAND_700_749
+  valuationCpp: 1.6
   active: true
   rewards:
-    baseRatePct: null
-    earnRates: []
+    baseRatePct: 0.01
+    earnRates:
+    - category: dining
+      ratePct: 0.03
+      note: 3x points on dining worldwide
+    - category: travel
+      ratePct: 0.02
+      note: 2x on travel booked directly with airlines, hotels, car rentals, and cruises
+    - category: general
+      ratePct: 0.01
+      cap:
+        amountCents: 500000
+        windowMonths: 1
+      note: 1x on rent payments (up to $10k per month when paid through Bilt)
   bonuses: []
   pacing:
     minDaysBetweenNewCards: 90
-  apr: {}
-  fees: {}
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 20.24
+        max: 29.99
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 20.24
+        max: 29.99
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0.03
+      minCents: 500
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
   eligibility:
-    suggestedHistoryYears: null
-    utilizationNote: null
-    otherNotes: []
-  benefits: []
+    suggestedHistoryYears: 2
+    utilizationNote: Must make at least 5 transactions per statement to earn points
+    otherNotes:
+    - Rent payments processed through the Bilt app/ACH; credit card rent payments incur
+      a fee.
+  benefits:
+  - Points on rent without transaction fees (via Bilt Rent Day network)
+  - Cell phone protection up to $800 per claim
+  - Monthly Rent Day promotions and Bilt Dining preferred reservations
+  - Trip cancellation & interruption protection
   cashbackTable:
-    rows: []
+    rows:
+    - category: dining
+      ratePct: 0.03
+    - category: travel
+      ratePct: 0.02
+    - category: general
+      ratePct: 0.01
   scraping:
-    source: null
-    sourceUrl: null
-    termsUrl: null
-    lastVerifiedAt: null
-    evidence: []
+    source: issuer
+    sourceUrl: https://www.biltcard.com
+    termsUrl: https://www.biltcard.com/terms
+    lastVerifiedAt: '2025-11-08'
+    evidence:
+    - Bilt Mastercard rewards summary (Nov 2025)
 - name: Bank of America Premium Rewards
   issuer: Bank of America
   network: VISA
   isChargeCard: false
-  annualFeeCents: null
+  annualFeeCents: 9500
   feeCredits:
-    totalAnnualCreditsCents: null
-    items: []
-  minScoreBand: null
-  valuationCpp: null
+    totalAnnualCreditsCents: 20000
+    items:
+    - name: Airline incidental statement credit
+      amountCents: 10000
+      cadence: annual
+      conditions: Select one U.S. airline for incidental fee reimbursement
+    - name: TSA PreCheck or Global Entry fee credit
+      amountCents: 10000
+      cadence: every_4_years
+      conditions: Credit every 4 years for application fee
+  minScoreBand: BAND_700_749
+  valuationCpp: 1.25
   active: true
   rewards:
-    baseRatePct: null
-    earnRates: []
-  bonuses: []
+    baseRatePct: 0.015
+    earnRates:
+    - category: travel
+      ratePct: 0.02
+      note: Travel and dining purchases earn 2x points
+    - category: dining
+      ratePct: 0.02
+      note: Restaurants, bars, food delivery
+  bonuses:
+  - kind: welcome
+    points: 60000
+    cashCents: null
+    windowMonths: 3
+    minSpendCents: 400000
+    expirationText: Offer as of November 2024
+    footnotes:
+    - Earn 60,000 points after $4,000 spend within 3 months (BofA Premium Rewards
+      offer, Nov 2024).
   pacing:
     minDaysBetweenNewCards: 90
-  apr: {}
-  fees: {}
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 20.24
+        max: 29.99
+      index: Prime
+    balanceTransferAPR:
+      rangePct:
+        min: 20.24
+        max: 29.99
+      introOffer:
+        introPct: 0.0
+        introMonths: 15
+        fee:
+          pct: 0.03
+          minCents: 500
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0.03
+      minCents: 1000
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
   eligibility:
-    suggestedHistoryYears: null
-    utilizationNote: null
-    otherNotes: []
-  benefits: []
+    suggestedHistoryYears: 3
+    utilizationNote: Preferred Rewards members receive 25%-75% bonus on points
+    otherNotes:
+    - Subject to Bank of America 2/3/4 application rule
+  benefits:
+  - Up to $200 in combined airline incidental and TSA Pre/Global Entry credits
+  - Preferred Rewards bonus boosts (25%-75% extra points)
+  - Trip cancellation/interruption protection and lost luggage reimbursement
+  - No foreign transaction fees
   cashbackTable:
-    rows: []
+    rows:
+    - category: travel
+      ratePct: 0.02
+    - category: dining
+      ratePct: 0.02
+    - category: general
+      ratePct: 0.015
   scraping:
-    source: null
-    sourceUrl: null
-    termsUrl: null
-    lastVerifiedAt: null
-    evidence: []
+    source: issuer
+    sourceUrl: https://www.bankofamerica.com/credit-cards/products/premium-rewards-credit-card/
+    termsUrl: https://www.bankofamerica.com/credit-cards/terms/
+    lastVerifiedAt: '2025-11-08'
+    evidence:
+    - Premium Rewards benefits & rates page (accessed Nov 2025)
 - name: Discover it Cash Back
   issuer: Discover
   network: DISCOVER
   isChargeCard: false
-  annualFeeCents: null
+  annualFeeCents: 0
   feeCredits:
-    totalAnnualCreditsCents: null
+    totalAnnualCreditsCents: 0
     items: []
-  minScoreBand: null
-  valuationCpp: null
+  minScoreBand: BAND_660_699
+  valuationCpp: 1.0
   active: true
   rewards:
-    baseRatePct: null
-    earnRates: []
-  bonuses: []
+    baseRatePct: 0.01
+    earnRates:
+    - category: groceries
+      ratePct: 0.05
+      isRotating: true
+      note: Rotating 5% category (activation required, up to $1,500 quarterly)
+    - category: gas
+      ratePct: 0.05
+      isRotating: true
+      note: Rotating 5% category
+    - category: dining
+      ratePct: 0.05
+      isRotating: true
+      note: Rotating 5% category
+    - category: online
+      ratePct: 0.05
+      isRotating: true
+      note: Rotating 5% category including digital wallets
+    rotatingCategories:
+      scheduleNote: Categories rotate quarterly; activation required; $1,500 purchase cap
+        per quarter.
+      windows:
+      - year: 2025
+        quarter: 1
+        categories:
+        - groceries
+        - drugstore
+      - year: 2025
+        quarter: 2
+        categories:
+        - dining
+        - online
+      - year: 2025
+        quarter: 3
+        categories:
+        - gas
+        - transit
+      - year: 2025
+        quarter: 4
+        categories:
+        - online
+        - general
+  bonuses:
+  - kind: other
+    points: null
+    cashCents: null
+    windowMonths: 12
+    minSpendCents: 0
+    expirationText: Cashback Match doubles all rewards earned in first 12 months
+    footnotes:
+    - Discover matches all cashback earned at the end of the first year for new cardmembers.
   pacing:
     minDaysBetweenNewCards: 90
-  apr: {}
-  fees: {}
+  apr:
+    purchaseAPR:
+      type: variable
+      rangePct:
+        min: 19.74
+        max: 29.74
+      index: Prime
+      introOffer:
+        introPct: 0.0
+        introMonths: 15
+    balanceTransferAPR:
+      rangePct:
+        min: 19.74
+        max: 29.74
+      introOffer:
+        introPct: 0.0
+        introMonths: 15
+        fee:
+          pct: 0.03
+          minCents: 500
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 0
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0.03
+      minCents: 500
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
   eligibility:
-    suggestedHistoryYears: null
-    utilizationNote: null
-    otherNotes: []
-  benefits: []
+    suggestedHistoryYears: 2
+    utilizationNote: Better approval odds with good credit and low utilization
+    otherNotes:
+    - Cashback Match only available for first-time Discover cardmembers.
+  benefits:
+  - Cashback Match doubles first-year rewards
+  - Free FICO score and account alerts
+  - Freeze It tool to instantly lock card via mobile app
   cashbackTable:
-    rows: []
+    rows:
+    - category: groceries
+      ratePct: 0.05
+    - category: dining
+      ratePct: 0.05
+    - category: gas
+      ratePct: 0.05
+    - category: online
+      ratePct: 0.05
+    - category: general
+      ratePct: 0.01
   scraping:
-    source: null
-    sourceUrl: null
-    termsUrl: null
-    lastVerifiedAt: null
-    evidence: []
+    source: issuer
+    sourceUrl: https://www.discover.com/credit-cards/cash-back/it-card.html
+    termsUrl: https://www.discover.com/credit-cards/cash-back/terms.html
+    lastVerifiedAt: '2025-11-08'
+    evidence:
+    - Discover it Cash Back offer and rotating categories (Nov 2025)
 - name: American Express Platinum
   issuer: American Express
   network: AMEX
-  isChargeCard: false
-  annualFeeCents: null
+  isChargeCard: true
+  annualFeeCents: 69500
   feeCredits:
-    totalAnnualCreditsCents: null
-    items: []
-  minScoreBand: null
-  valuationCpp: null
+    totalAnnualCreditsCents: 78900
+    items:
+    - name: Airline incidental fee credit
+      amountCents: 20000
+      cadence: annual
+      conditions: Select one qualifying airline each year
+    - name: Uber Cash (rides + Eats)
+      amountCents: 20000
+      cadence: monthly
+      conditions: $15 monthly plus $35 in December (enrollment required)
+    - name: Prepaid Fine Hotels + Resorts / The Hotel Collection credit
+      amountCents: 20000
+      cadence: annual
+      conditions: Book via Amex Travel, $200 minimum stay
+    - name: CLEAR Plus credit
+      amountCents: 18900
+      cadence: annual
+      conditions: CLEAR membership fee statement credit
+  minScoreBand: BAND_750_PLUS
+  valuationCpp: 1.8
   active: true
   rewards:
-    baseRatePct: null
-    earnRates: []
-  bonuses: []
+    baseRatePct: 0.01
+    earnRates:
+    - category: travel
+      ratePct: 0.05
+      note: 5X Membership Rewards on flights booked directly with airlines or Amex
+        Travel
+    - category: travel
+      ratePct: 0.05
+      note: 5X on prepaid hotels booked through Amex Travel
+  bonuses:
+  - kind: welcome
+    points: 80000
+    cashCents: null
+    windowMonths: 6
+    minSpendCents: 600000
+    expirationText: Public offer as of November 2024
+    footnotes:
+    - Earn 80k Membership Rewards after $6k spend in 6 months (Amex Platinum offer,
+      Nov 2024).
   pacing:
     minDaysBetweenNewCards: 90
-  apr: {}
-  fees: {}
+  apr:
+    purchaseAPR:
+      type: pay_over_time
+      rangePct:
+        min: 20.24
+        max: 29.99
+      index: Prime
+    cashAdvanceAPR:
+      pct: 29.99
+    penaltyAPR:
+      pct: 29.99
+  fees:
+    foreignTransaction:
+      type: none
+      pct: 0
+    balanceTransferFee:
+      pct: 0
+      minCents: 0
+    cashAdvanceFee:
+      pct: 0.05
+      minCents: 1000
+    lateFeeCents: 4000
+    returnedPaymentFeeCents: 4000
   eligibility:
-    suggestedHistoryYears: null
-    utilizationNote: null
-    otherNotes: []
-  benefits: []
+    suggestedHistoryYears: 5
+    utilizationNote: Excellent credit recommended; subject to Amex once-per-lifetime
+      bonus rule
+    otherNotes:
+    - High credit limits required; Pay Over Time enrollment available
+  benefits:
+  - Priority Pass Select, Centurion Lounge, Delta Sky Club (with same-day Delta flight)
+  - Up to $789 in annual statement credits (airline incidental, Uber Cash, hotel,
+    CLEAR, TSA Pre/Global Entry)
+  - Marriott Bonvoy Gold & Hilton Honors Gold status (enrollment required)
+  - Premium travel protections including trip delay, cancellation, and baggage insurance
   cashbackTable:
-    rows: []
+    rows:
+    - category: travel
+      ratePct: 0.05
+    - category: general
+      ratePct: 0.01
   scraping:
-    source: null
-    sourceUrl: null
-    termsUrl: null
-    lastVerifiedAt: null
-    evidence: []
+    source: issuer
+    sourceUrl: https://www.americanexpress.com/us/credit-cards/card/platinum/
+    termsUrl: https://www.americanexpress.com/us/credit-cards/card-application/apply/platinum-card/terms
+    lastVerifiedAt: '2025-11-08'
+    evidence:
+    - American Express Platinum Card benefits & rates (accessed Nov 2025)

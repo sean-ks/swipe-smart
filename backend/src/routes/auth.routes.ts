@@ -7,7 +7,26 @@ const router = Router();
 // Create profile for new user (called after Supabase signup)
 router.post('/create-profile', async (req, res) => {
   try {
-    const { id, email } = req.body;
+    const {
+      id,
+      email,
+      firstName,
+      lastName,
+      phone,
+      creditHistoryAge,
+      creditScore,
+      knowsCreditScore,
+      travelGoal,
+      diningGoal,
+      buildCreditGoal,
+      cashbackGoal,
+      onlineShoppingGoal
+    } = req.body;
+
+    // DEBUG: Log full request body to diagnose NULL values issue
+    console.log('==================== CREATE PROFILE DEBUG ====================');
+    console.log('FULL REQUEST BODY:', JSON.stringify(req.body, null, 2));
+    console.log('==============================================================');
 
     console.log('Create profile request received:', { id, email });
 
@@ -25,23 +44,55 @@ router.post('/create-profile', async (req, res) => {
     });
 
     if (existingProfile) {
-      console.log('Profile already exists for user:', id);
-      return res.json({
-        message: 'Profile already exists',
-        profile: existingProfile,
+      // If profile exists but has NULL fields, UPDATE it with full data
+      // This handles the database trigger that creates empty profiles
+      console.log('Profile exists - updating with full data');
+
+      const updatedProfile = await prisma.profile.update({
+        where: { userId: id },
+        data: {
+          firstName: firstName || null,
+          lastName: lastName || null,
+          phone: phone || null,
+          creditHistoryAge: creditHistoryAge || null,
+          creditScore: creditScore || null,
+          knowsCreditScore: knowsCreditScore || null,
+          travelGoal: travelGoal || null,
+          diningGoal: diningGoal || null,
+          buildCreditGoal: buildCreditGoal || null,
+          cashbackGoal: cashbackGoal || null,
+          onlineShoppingGoal: onlineShoppingGoal || null,
+        }
+      });
+
+      console.log('Profile updated successfully with full data:', updatedProfile.userId);
+
+      return res.status(200).json({
+        message: 'Profile updated successfully',
+        profile: updatedProfile,
         isNewUser: false
       });
     }
 
-    // Create new profile
+    // Create new profile with ALL data at once
     const newProfile = await prisma.profile.create({
       data: {
         userId: id,
-        // Other fields will be filled during onboarding
+        firstName: firstName || null,
+        lastName: lastName || null,
+        phone: phone || null,
+        creditHistoryAge: creditHistoryAge || null,
+        creditScore: creditScore || null,
+        knowsCreditScore: knowsCreditScore || null,
+        travelGoal: travelGoal || null,
+        diningGoal: diningGoal || null,
+        buildCreditGoal: buildCreditGoal || null,
+        cashbackGoal: cashbackGoal || null,
+        onlineShoppingGoal: onlineShoppingGoal || null,
       }
     });
 
-    console.log('Profile created successfully:', newProfile.userId);
+    console.log('Profile created successfully with full data:', newProfile.userId);
 
     return res.status(201).json({
       message: 'Profile created successfully',

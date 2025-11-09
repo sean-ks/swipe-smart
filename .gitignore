@@ -6,6 +6,22 @@ node_modules
 
 # Vite
 .vite
+dist
+build
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
 
 # cc
 .serena/
@@ -14,5 +30,4 @@ CLAUDE.md
 CUSTOM_SUBAGENT_PROMPT.md
 AUTONOMOUS-DEBUGGING-PROTOCOL.md
 TPM-PROTOCOL.md
-CHANGELOG.md
 swipe-smart-design-mockup/

@@ -35,6 +35,7 @@ import {
   Crown,
   TrendingUp,
   LogOut,
+  Landmark,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../lib/supabase";
@@ -333,6 +334,13 @@ export default function Dashboard({
             >
               <Compass className="w-4 h-4 mr-2" />
               Explore
+            </Button>
+            <Button
+              onClick={() => onNavigate("connected-banks")}
+              className="bg-green-500/20 border-2 border-green-400/40 text-white hover:bg-green-500/30 backdrop-blur-sm"
+            >
+              <Landmark className="w-4 h-4 mr-2" />
+              My Banks
             </Button>
             <Button
               onClick={handleSignOut}
