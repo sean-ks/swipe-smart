@@ -11,6 +11,8 @@ interface SignInProps {
   onNavigate: (screen: string) => void;
 }
 
+import { api } from '../lib/api';
+
 export default function SignIn({ onNavigate }: SignInProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,18 +25,26 @@ export default function SignIn({ onNavigate }: SignInProps) {
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      setError(error.message);
+    try {
+      const { user, session, isNewUser } = await api.auth.signIn({ email, password });
+      
+      // Set the session in Supabase client for auth state
+      if (session) {
+        await supabase.auth.setSession(session);
+      }
+      
+      if (isNewUser) {
+        onNavigate('signup-flow');
+      } else {
+        onNavigate('dashboard');
+      }
+    } catch (error) {
+      console.error('Email signin error:', error);
+      setError(error instanceof Error ? error.message : 'Invalid email or password');
+    } finally {
       setLoading(false);
-    } else {
-      onNavigate('dashboard');
     }
-  };
+  };;
 
   const handleGoogleSignIn = async () => {
     setLoading(true);

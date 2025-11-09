@@ -5,65 +5,32 @@ import { verifyToken, AuthRequest } from '../middleware/auth.middleware';
 
 const router = Router();
 
-// Sign up endpoint
-router.post('/signup', async (req, res) => {
+// Create profile for newly signed up user
+router.post('/create-profile', verifyToken, async (req: AuthRequest, res) => {
   try {
-    const { email, password } = req.body;
-
-    // Create user in Supabase
-    const { data: authData, error: authError } = await supabaseAdmin.auth.signUp({
-      email,
-      password,
-    });
-
-    if (authError || !authData.user) {
-      return res.status(400).json({ error: authError?.message || 'Signup failed' });
+    if (!req.userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // Create profile in database using Prisma
+    // Check if profile already exists
+    const existing = await prisma.profile.findUnique({
+      where: { userId: req.userId },
+    });
+
+    if (existing) {
+      return res.json({ profile: existing, created: false });
+    }
+
+    // Create new profile
     const profile = await prisma.profile.create({
       data: {
-        userId: authData.user.id,
+        userId: req.userId,
       },
     });
 
-    res.json({
-      user: authData.user,
-      session: authData.session,
-      profile
-    });
+    res.json({ profile, created: true });
   } catch (error) {
-    console.error('Signup error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Sign in endpoint
-router.post('/signin', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    const { data: authData, error: authError } = await supabaseAdmin.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (authError || !authData.user) {
-      return res.status(400).json({ error: authError?.message || 'Invalid credentials' });
-    }
-
-    // Check if profile exists
-    const profile = await prisma.profile.findUnique({
-      where: { userId: authData.user.id },
-    });
-
-    res.json({
-      user: authData.user,
-      session: authData.session,
-      isNewUser: !profile
-    });
-  } catch (error) {
-    console.error('Signin error:', error);
+    console.error('Create profile error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -89,9 +56,13 @@ router.get('/profile', verifyToken, async (req: AuthRequest, res) => {
 // Update profile endpoint
 router.put('/profile', verifyToken, async (req: AuthRequest, res) => {
   try {
-    const profile = await prisma.profile.update({
+    const profile = await prisma.profile.upsert({
       where: { userId: req.userId },
-      data: req.body,
+      update: req.body,
+      create: {
+        userId: req.userId!,
+        ...req.body,
+      },
     });
 
     res.json(profile);

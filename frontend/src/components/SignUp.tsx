@@ -11,6 +11,8 @@ interface SignUpProps {
   onNavigate: (screen: string) => void;
 }
 
+import { api } from '../lib/api';
+
 export default function SignUp({ onNavigate }: SignUpProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,34 +23,34 @@ export default function SignUp({ onNavigate }: SignUpProps) {
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    
     setLoading(true);
     setError(null);
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      setLoading(false);
-      return;
-    }
-
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
-      setLoading(false);
-      return;
-    }
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-    } else {
-      // After successful signup, go to signup flow for additional info
+    try {
+      const { user, session } = await api.auth.signUp({ email, password });
+      
+      // Set the session in Supabase client for auth state
+      if (session) {
+        await supabase.auth.setSession(session);
+      }
+      
       onNavigate('signup-flow');
+    } catch (error) {
+      console.error('Email signup error:', error);
+      setError(error instanceof Error ? error.message : 'An error occurred during sign up');
+    } finally {
+      setLoading(false);
     }
-  };
+  };;
 
   const handleGoogleSignUp = async () => {
     setLoading(true);
