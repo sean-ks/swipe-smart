@@ -44,10 +44,32 @@ router.post('/create-profile', async (req, res) => {
     });
 
     if (existingProfile) {
-      console.log('Profile already exists for user:', id);
-      return res.json({
-        message: 'Profile already exists',
-        profile: existingProfile,
+      // If profile exists but has NULL fields, UPDATE it with full data
+      // This handles the database trigger that creates empty profiles
+      console.log('Profile exists - updating with full data');
+
+      const updatedProfile = await prisma.profile.update({
+        where: { userId: id },
+        data: {
+          firstName: firstName || null,
+          lastName: lastName || null,
+          phone: phone || null,
+          creditHistoryAge: creditHistoryAge || null,
+          creditScore: creditScore || null,
+          knowsCreditScore: knowsCreditScore || null,
+          travelGoal: travelGoal || null,
+          diningGoal: diningGoal || null,
+          buildCreditGoal: buildCreditGoal || null,
+          cashbackGoal: cashbackGoal || null,
+          onlineShoppingGoal: onlineShoppingGoal || null,
+        }
+      });
+
+      console.log('Profile updated successfully with full data:', updatedProfile.userId);
+
+      return res.status(200).json({
+        message: 'Profile updated successfully',
+        profile: updatedProfile,
         isNewUser: false
       });
     }
