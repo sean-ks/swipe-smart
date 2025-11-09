@@ -2,6 +2,22 @@ import { supabase } from './supabase';
 
 const API_BASE = '/api';
 
+export interface CompleteProfileData {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  creditHistoryAge?: string;
+  creditScore?: number;
+  knowsCreditScore?: boolean;
+  travelGoal?: string;
+  diningGoal?: string;
+  buildCreditGoal?: string;
+  cashbackGoal?: string;
+  onlineShoppingGoal?: string;
+}
+
 export interface ProfileData {
   firstName?: string;
   lastName?: string;
@@ -80,11 +96,11 @@ async function authorizedFetch(
 
 export const api = {
   auth: {
-    async createProfile(userId: string, email: string) {
+    async createProfile(profileData: CompleteProfileData) {
       const response = await fetch(`${API_BASE}/auth/create-profile`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: userId, email }),
+        body: JSON.stringify(profileData),
       });
 
       if (!response.ok) {
