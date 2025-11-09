@@ -22,12 +22,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // Get initial session with proper error handling
+    supabase.auth.getSession()
+      .then(async ({ data: { session } }) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+
+        // Check if user has profile (for existing sessions on page load)
+        if (session?.user) {
+          try {
+            const profile = await api.auth.getProfile();
+            setIsNewUser(!profile);
+          } catch (error) {
+            console.error('Profile check failed:', error);
+            setIsNewUser(true); // Assume new user if profile fetch fails
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('Session restoration failed:', error);
+        // Clear any corrupted session data
+        setSession(null);
+        setUser(null);
+      })
+      .finally(() => {
+        setLoading(false); // CRITICAL: Always set loading to false
+      });
 
     // Listen for auth changes
     const {
